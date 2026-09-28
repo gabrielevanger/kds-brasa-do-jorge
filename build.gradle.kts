@@ -6,5 +6,10 @@ plugins {
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.hilt.android) apply false
-    alias(libs.plugins.ktlint) apply false
+    alias(libs.plugins.ktlint)
+}
+
+// Aplicado na raiz para verificar também os scripts do Gradle deste diretório.
+ktlint {
+    version.set(libs.versions.ktlint)
 }

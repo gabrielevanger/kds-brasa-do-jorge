@@ -1,5 +1,10 @@
 plugins {
     `kotlin-dsl`
+    alias(libs.plugins.ktlint)
+}
+
+ktlint {
+    version.set(libs.versions.ktlint)
 }
 
 group = "io.github.gabrielevanger.kds.buildlogic"
@@ -8,13 +13,14 @@ kotlin {
     jvmToolchain(
         libs.versions.jvmToolchain
             .get()
-            .toInt(),
+            .toInt()
     )
 }
 
 dependencies {
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
+    compileOnly(libs.ktlint.gradlePlugin)
 }
 
 gradlePlugin {

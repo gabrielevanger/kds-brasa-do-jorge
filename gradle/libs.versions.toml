@@ -25,6 +25,8 @@ mockk = "1.14.11"
 androidxTestExtJunit = "1.3.0"
 androidxTestRunner = "1.7.0"
 ktlintGradle = "14.2.0"
+# Versão do motor do ktlint, fixada para o resultado não mudar com o plugin.
+ktlint = "1.8.0"
 
 # Plataforma Android
 compileSdk = "37"
@@ -36,6 +38,7 @@ jvmToolchain = "17"
 # Plugins do Gradle usados pelos plugins de convenção (build-logic)
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+ktlint-gradlePlugin = { group = "org.jlleitschuh.gradle", name = "ktlint-gradle", version.ref = "ktlintGradle" }
 
 # AndroidX
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

@@ -12,8 +12,18 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             extensions.configure<ApplicationExtension> {
                 configureAndroid(this)
                 defaultConfig.targetSdk = libs.intVersionOf("targetSdk")
+                lint {
+                    checkDependencies = true
+                    warningsAsErrors = true
+                    abortOnError = true
+                    sarifReport = true
+                    // Estas checagens consultam versões novas na internet: o resultado mudaria
+                    // sem nenhuma alteração no código. Atualizar dependências é tarefa à parte.
+                    disable += setOf("GradleDependency", "NewerVersionAvailable", "AndroidGradlePluginVersion")
+                }
             }
             configureUnitTests()
+            configureKtlint()
         }
     }
 }

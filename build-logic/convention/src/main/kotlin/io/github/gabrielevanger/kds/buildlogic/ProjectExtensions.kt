@@ -12,11 +12,11 @@ private const val BASE_PACKAGE = "io.github.gabrielevanger.kds"
 internal val Project.libs: VersionCatalog
     get() = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
-internal fun VersionCatalog.intVersionOf(alias: String): Int =
-    findVersion(alias).get().requiredVersion.toInt()
+internal fun VersionCatalog.versionOf(alias: String): String = findVersion(alias).get().requiredVersion
 
-internal fun VersionCatalog.library(alias: String): Provider<MinimalExternalModuleDependency> =
-    findLibrary(alias).get()
+internal fun VersionCatalog.intVersionOf(alias: String): Int = versionOf(alias).toInt()
+
+internal fun VersionCatalog.library(alias: String): Provider<MinimalExternalModuleDependency> = findLibrary(alias).get()
 
 /**
  * Deriva o namespace do caminho do módulo, para não repeti-lo em cada build script:

@@ -14,6 +14,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 configureAndroid(this)
             }
             configureUnitTests()
+            configureKtlint()
         }
     }
 }

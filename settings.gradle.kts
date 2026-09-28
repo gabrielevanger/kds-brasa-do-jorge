@@ -23,3 +23,10 @@ dependencyResolutionManagement {
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 rootProject.name = "kds-brasa-do-jorge"
+
+include(":app")
+include(":core:domain")
+include(":core:data")
+include(":core:designsystem")
+include(":feature:board")
+include(":feature:expedition")

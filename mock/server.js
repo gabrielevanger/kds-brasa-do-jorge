@@ -206,6 +206,15 @@ setInterval(() => {
   broadcast('order.created', order);
 }, EVENT_INTERVAL_MS);
 
+// Heartbeat: comentário SSE, ignorado pelos clientes, enviado mesmo sem eventos.
+// Sem ele, uma conexão meio aberta (roteador reiniciou, Wi-Fi oscilou) fica muda
+// para sempre; com ele, o cliente detecta o silêncio por timeout de leitura.
+const HEARTBEAT_MS = Number(process.env.HEARTBEAT_MS || 15000);
+
+setInterval(() => {
+  for (const res of clients) res.write(': ping\n\n');
+}, HEARTBEAT_MS);
+
 // ---------------------------------------------------------------------------
 // HTTP
 // ---------------------------------------------------------------------------
@@ -321,5 +330,6 @@ server.listen(PORT, () => {
   console.log(`   GET   /orders          lista pedidos`);
   console.log(`   PATCH /orders/:id      muda stage  { "stage": "PREPARING" }`);
   console.log(`   GET   /events          stream SSE (order.created / order.updated)`);
-  console.log(`   Novo pedido a cada ${EVENT_INTERVAL_MS / 1000}s (env EVENT_INTERVAL_MS)\n`);
+  console.log(`   Novo pedido a cada ${EVENT_INTERVAL_MS / 1000}s (env EVENT_INTERVAL_MS)`);
+  console.log(`   Heartbeat SSE a cada ${HEARTBEAT_MS / 1000}s (env HEARTBEAT_MS)\n`);
 });

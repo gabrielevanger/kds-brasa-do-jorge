@@ -68,6 +68,15 @@ es.addEventListener('order.updated', (e) => console.log('mudou', JSON.parse(e.da
 Um pedido novo entra a cada **5s** por padrão. Ajuste com a env `EVENT_INTERVAL_MS`
 (ms), ex.: `EVENT_INTERVAL_MS=2000 node mock/server.js`.
 
+### Heartbeat
+
+A cada **15s** o stream recebe um comentário SSE (`: ping`), mesmo sem eventos.
+Comentários são ignorados pelo `EventSource` e pelas bibliotecas de SSE, então
+nenhum cliente precisa tratá-los. Eles servem para o cliente detectar uma conexão
+que ficou aberta mas parou de receber dados: sem nada chegar por um tempo maior
+que o intervalo do heartbeat, a conexão pode ser considerada morta e reaberta.
+Ajuste com a env `HEARTBEAT_MS` (ms).
+
 ## Formato do pedido
 
 ```json

@@ -128,9 +128,18 @@ function makeOrder({ ageSeconds = 0, stage = 'PENDING' } = {}) {
     total: money(total),
     created: isoNoTz(created),
     updated: isoNoTz(created),
+    version: 1,
     note: rand() > 0.8 ? 'Cliente com pressa' : null,
     orderItems,
   };
+}
+
+// Toda alteração de pedido passa por aqui. O `version` cresce a cada mudança
+// para o cliente descartar evento repetido, eco do próprio PATCH e evento fora
+// de ordem: o `updated` tem resolução de segundos e empata.
+function touch(order) {
+  order.version += 1;
+  order.updated = isoNoTz(new Date());
 }
 
 // ---------------------------------------------------------------------------
@@ -175,7 +184,7 @@ setInterval(() => {
   if (rand() < 0.2 && active.length > 3) {
     const victim = pick(active);
     victim.stage = 'CANCELED';
-    victim.updated = isoNoTz(new Date());
+    touch(victim);
     broadcast('order.updated', victim);
     return;
   }
@@ -269,7 +278,7 @@ const server = http.createServer(async (req, res) => {
         );
       }
       order.stage = body.stage;
-      order.updated = isoNoTz(new Date());
+      touch(order);
       broadcast('order.updated', order);
       return send(res, 200, order);
     }

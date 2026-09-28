@@ -54,6 +54,7 @@ Um pedido novo entra a cada **5s** por padrão. Ajuste com a env `EVENT_INTERVAL
   "total": "54.00",
   "created": "2026-09-21T20:14:03",
   "updated": "2026-09-21T20:16:40",
+  "version": 3,
   "note": null,
   "orderItems": [
     {
@@ -75,6 +76,7 @@ Um pedido novo entra a cada **5s** por padrão. Ajuste com a env `EVENT_INTERVAL
 ### Valores possíveis
 
 - `id` (número) e `reference` (código exibível, ex.: `#0007`): identificam o pedido. Use o `id` como chave — inclusive para não duplicar o card quando o mesmo evento chegar duas vezes.
+- `version` (número): começa em `1` e cresce a cada alteração do pedido (mudança de stage ou cancelamento). Um evento só deve ser aplicado se o `version` dele for maior que o que o cliente já tem; assim, evento repetido, eco do próprio PATCH e evento fora de ordem são descartados.
 - `origin` (canal de onde o pedido veio): `POS` (balcão), `WHATSAPP_AI` (WhatsApp), `IFOOD`, `MARKETPLACE` (app/marketplace Pigz), `CARDAPIO_WEB` (cardápio web), `CLIENTE_FIEL` (Cliente Fiel)
 - `stage`: `PENDING` → `CONFIRMED` → `PREPARING` → `READY` → `DONE`, ou `CANCELED`
 - `status` (pagamento): `PAID` | `NO_PAID`

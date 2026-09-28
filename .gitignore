@@ -1,0 +1,33 @@
+# Gradle
+.gradle/
+.kotlin/
+build/
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+captures/
+.cxx/
+.externalNativeBuild/
+
+# Configuração local
+local.properties
+
+# Artefatos gerados
+*.apk
+*.aab
+*.ap_
+
+# Chaves de assinatura
+*.jks
+*.keystore
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Node (mock)
+node_modules/
+
+# Contexto local do assistente de IA
+CLAUDE.local.md

@@ -40,6 +40,18 @@ const ORIGINS = ['POS', 'WHATSAPP_AI', 'IFOOD', 'MARKETPLACE', 'CARDAPIO_WEB', '
 // deste KDS de cozinha — o back real não tem "pronto na cozinha".
 const STAGES = ['PENDING', 'CONFIRMED', 'PREPARING', 'READY', 'DONE', 'CANCELED'];
 
+// Transições de stage aceitas pelo PATCH. DONE e CANCELED são finais.
+// READY → PREPARING permite refazer um pedido; o "Desfazer" do app é resolvido
+// no cliente, adiando o envio, e por isso não existem outras voltas.
+const TRANSITIONS = {
+  PENDING: ['CONFIRMED', 'PREPARING', 'CANCELED'],
+  CONFIRMED: ['PREPARING', 'CANCELED'],
+  PREPARING: ['READY', 'CANCELED'],
+  READY: ['DONE', 'PREPARING', 'CANCELED'],
+  DONE: [],
+  CANCELED: [],
+};
+
 // status: status de pagamento (valores reais STATUS_PAID / STATUS_NO_PAID).
 const PAYMENT_STATUSES = ['PAID', 'NO_PAID'];
 
@@ -218,6 +230,17 @@ function validationError(res, field, message) {
   });
 }
 
+// Transição não permitida. O corpo traz o pedido atual para o cliente
+// reconciliar a tela sem precisar de outra requisição.
+function conflictError(res, order, requestedStage) {
+  return send(res, 409, {
+    error: `Transição de ${order.stage} para ${requestedStage} não permitida`,
+    identifier: 'ORDER-409-001',
+    code: 'ORDER-409-001',
+    order,
+  });
+}
+
 function readBody(req) {
   return new Promise((resolve) => {
     let data = '';
@@ -276,6 +299,12 @@ const server = http.createServer(async (req, res) => {
           'stage',
           `stage inválido. Válidos: ${STAGES.join(', ')}`,
         );
+      }
+      // Reenvio do stage atual (ex.: retry após falha de rede) é idempotente:
+      // responde 200 sem alterar version nem emitir evento.
+      if (body.stage === order.stage) return send(res, 200, order);
+      if (!TRANSITIONS[order.stage].includes(body.stage)) {
+        return conflictError(res, order, body.stage);
       }
       order.stage = body.stage;
       touch(order);

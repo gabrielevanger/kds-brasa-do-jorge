@@ -22,6 +22,33 @@ Sobe em `http://localhost:4000` (mude com a env `PORT`).
 vem como `{ "error": "..." }`; erros de validação trazem também `identifier`,
 `code` e `errors[]`.
 
+### Transições de stage
+
+O `PATCH` só aceita as transições abaixo. Qualquer outra responde **409 Conflict**
+com o pedido atual em `order`, para o cliente corrigir a tela sem outra requisição.
+
+| De | Para |
+|---|---|
+| `PENDING` | `CONFIRMED`, `PREPARING`, `CANCELED` |
+| `CONFIRMED` | `PREPARING`, `CANCELED` |
+| `PREPARING` | `READY`, `CANCELED` |
+| `READY` | `DONE`, `PREPARING` (refazer), `CANCELED` |
+| `DONE`, `CANCELED` | nenhuma (estados finais) |
+
+Enviar o stage em que o pedido já está responde 200 sem alterar nada (sem novo
+`version` e sem evento), então repetir a requisição após uma falha de rede é seguro.
+
+Exemplo de resposta 409 (pedido resumido):
+
+```json
+{
+  "error": "Transição de DONE para PENDING não permitida",
+  "identifier": "ORDER-409-001",
+  "code": "ORDER-409-001",
+  "order": { "id": 7, "stage": "DONE", "version": 5 }
+}
+```
+
 ## Tempo real (SSE)
 
 `GET /events` abre um stream. No connect, ele manda um evento `snapshot` com a

@@ -1,5 +1,7 @@
 plugins {
     id("kds.jvm.library")
+    // Fixtures de pedido compartilhadas com os testes de outros módulos, fora do código de produção.
+    `java-test-fixtures`
 }
 
 dependencies {

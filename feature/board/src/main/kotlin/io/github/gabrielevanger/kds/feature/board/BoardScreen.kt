@@ -169,7 +169,12 @@ private fun BoardColumn(
                 modifier = Modifier.testTag(BoardTags.column(tone)),
             ) {
                 items(items = orders, key = { it.id.value }, contentType = { ORDER_CARD_CONTENT_TYPE }) { card ->
-                    OrderCard(card = card, onAdvance = onAdvance?.let { advance -> { advance(card.id) } })
+                    // Card que chega, sai ou muda de lugar se move em vez de saltar: a cozinha percebe o que mudou.
+                    OrderCard(
+                        card = card,
+                        onAdvance = onAdvance?.let { advance -> { advance(card.id) } },
+                        modifier = Modifier.animateItem(),
+                    )
                 }
             }
         }

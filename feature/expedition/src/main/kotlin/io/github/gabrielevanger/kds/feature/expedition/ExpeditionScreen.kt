@@ -94,7 +94,12 @@ fun ExpeditionScreen(
                     modifier = Modifier.testTag(ExpeditionTags.LIST),
                 ) {
                     items(items = state.orders, key = { it.id.value }) { order ->
-                        ReadyOrderCard(order = order, onDeliver = { onDeliver(order.id) })
+                        // Pedido que fica pronto ou é entregue entra e sai animado: o garçom vê o que mudou.
+                        ReadyOrderCard(
+                            order = order,
+                            onDeliver = { onDeliver(order.id) },
+                            modifier = Modifier.animateItem(),
+                        )
                     }
                 }
             }

@@ -22,14 +22,14 @@ data class KdsTypography(
 
 val KitchenTypography = KdsTypography(
     orderNumber = TextStyle(fontSize = 28.sp, fontWeight = FontWeight.Bold),
-    origin = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Black, letterSpacing = 0.5.sp),
+    origin = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
     timer = TextStyle(fontSize = 30.sp, fontWeight = FontWeight.Bold, fontFeatureSettings = TABULAR_NUMBERS),
-    columnTitle = TextStyle(fontSize = 22.sp, fontWeight = FontWeight.Black, letterSpacing = 1.sp),
+    columnTitle = TextStyle(fontSize = 22.sp, fontWeight = FontWeight.Bold),
     itemName = TextStyle(fontSize = 21.sp, fontWeight = FontWeight.SemiBold),
     modifier = TextStyle(fontSize = 19.sp, fontWeight = FontWeight.Bold),
     body = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Normal),
     label = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold, letterSpacing = 0.5.sp),
-    action = TextStyle(fontSize = 22.sp, fontWeight = FontWeight.Black, letterSpacing = 1.sp),
+    action = TextStyle(fontSize = 22.sp, fontWeight = FontWeight.Bold),
 )
 
 /** Recurso OpenType de dígitos com largura fixa. */

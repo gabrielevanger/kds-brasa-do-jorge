@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="expedition_title">PARA ENTREGAR</string>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="pt-rBR">
+    <string name="expedition_title">Para entregar</string>
     <string name="expedition_empty">Nenhum pedido pronto no balcão</string>
     <string name="expedition_charge">COBRAR</string>
-    <string name="expedition_on_counter">NO BALCÃO HÁ</string>
+    <string name="expedition_on_counter">No balcão há</string>
     <plurals name="expedition_item_count">
         <item quantity="one">%1$d item</item>
+        <item quantity="many">%1$d itens</item>
         <item quantity="other">%1$d itens</item>
     </plurals>
-    <string name="expedition_deliver">ENTREGUE</string>
+    <string name="expedition_deliver">Entregue</string>
 </resources>

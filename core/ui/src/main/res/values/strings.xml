@@ -21,6 +21,7 @@
     <string name="kitchen_connection_stale">Os pedidos abaixo podem estar desatualizados.</string>
 
     <string name="kitchen_alert_title">%1$s CANCELADO · NÃO FAZER</string>
+    <string name="kitchen_alert_title_ready">%1$s CANCELADO · NÃO ENTREGAR</string>
     <string name="kitchen_alert_context">Estava em %1$s · %2$s</string>
     <string name="kitchen_alert_dismiss">CIENTE</string>
 

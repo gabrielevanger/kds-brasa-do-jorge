@@ -57,6 +57,14 @@ class CancellationAlertsTest {
         composeRule.onNodeWithText(context.getString(R.string.kitchen_alert_title, "#0009")).assertIsDisplayed()
     }
 
+    /** O lanche pronto já foi feito: o risco agora é alguém entregá-lo. */
+    @Test
+    fun pedidoCanceladoDepoisDeProntoPedeParaNaoEntregar() {
+        show(persistentListOf(alert(9, StageTone.READY)))
+
+        composeRule.onNodeWithText(context.getString(R.string.kitchen_alert_title_ready, "#0009")).assertIsDisplayed()
+    }
+
     @Test
     fun alertaDizEmQueEtapaEstavaEDeOndeVeio() {
         show(persistentListOf(alert(9)))

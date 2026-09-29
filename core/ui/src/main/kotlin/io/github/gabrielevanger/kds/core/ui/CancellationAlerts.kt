@@ -19,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import io.github.gabrielevanger.kds.core.designsystem.R as DesignR
 import io.github.gabrielevanger.kds.core.designsystem.component.KitchenActionButton
+import io.github.gabrielevanger.kds.core.designsystem.component.StageTone
 import io.github.gabrielevanger.kds.core.designsystem.theme.KdsTheme
 import io.github.gabrielevanger.kds.core.domain.model.OrderId
 import kotlinx.collections.immutable.ImmutableList
@@ -83,7 +84,12 @@ private fun RowScope.AlertMessage(alert: CancellationAlertUi) {
     )
     Column(modifier = Modifier.weight(EQUAL_SHARE), verticalArrangement = Arrangement.spacedBy(spacing.xxs)) {
         Text(
-            text = stringResource(R.string.kitchen_alert_title, alert.reference),
+            // Pronto já foi feito: a instrução passa a ser não entregar.
+            text = if (alert.previousTone == StageTone.READY) {
+                stringResource(R.string.kitchen_alert_title_ready, alert.reference)
+            } else {
+                stringResource(R.string.kitchen_alert_title, alert.reference)
+            },
             style = typography.columnTitle,
             color = colors.onCanceled,
         )

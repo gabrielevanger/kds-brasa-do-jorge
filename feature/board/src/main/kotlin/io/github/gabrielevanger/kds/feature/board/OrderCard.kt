@@ -12,8 +12,14 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -24,6 +30,7 @@ import io.github.gabrielevanger.kds.core.designsystem.component.OriginTag
 import io.github.gabrielevanger.kds.core.designsystem.component.WaitLevel
 import io.github.gabrielevanger.kds.core.designsystem.component.WaitTimer
 import io.github.gabrielevanger.kds.core.designsystem.component.visual
+import io.github.gabrielevanger.kds.core.designsystem.theme.KdsColors
 import io.github.gabrielevanger.kds.core.designsystem.theme.KdsTheme
 import io.github.gabrielevanger.kds.core.domain.kitchen.WaitBand
 import io.github.gabrielevanger.kds.core.domain.kitchen.WaitPolicy
@@ -50,7 +57,12 @@ private val waitPolicy = WaitPolicy()
 @Composable
 fun OrderCard(card: OrderCardUi, onAdvance: (() -> Unit)?, modifier: Modifier = Modifier) {
     val spacing = KdsTheme.spacing
+    val colors = KdsTheme.colors
+    val stripeWidth = KdsTheme.sizes.urgencyStripeWidth
     val visual = card.tone.visual()
+    val now = LocalNow.current
+    // Muda só quando a faixa muda (duas vezes na vida do pedido), e não a cada segundo do relógio.
+    val band by remember(card.createdAt, now) { derivedStateOf { waitPolicy.bandFor(card.createdAt, now.value) } }
     Surface(
         modifier = modifier
             .fillMaxWidth()
@@ -59,7 +71,16 @@ fun OrderCard(card: OrderCardUi, onAdvance: (() -> Unit)?, modifier: Modifier = 
         color = KdsTheme.colors.surface,
         border = BorderStroke(KdsTheme.sizes.cardBorderWidth, KdsTheme.colors.cardOutline),
     ) {
-        Column(modifier = Modifier.padding(spacing.m), verticalArrangement = Arrangement.spacedBy(spacing.s)) {
+        Column(
+            modifier = Modifier
+                // Faixa lateral na cor do atraso: de longe, os pedidos atrasados se destacam na coluna.
+                // Pintada no desenho, sem recompor nem remedir o card.
+                .drawBehind {
+                    band.stripeColor(colors)?.let { drawRect(it, size = Size(stripeWidth.toPx(), size.height)) }
+                }
+                .padding(spacing.m),
+            verticalArrangement = Arrangement.spacedBy(spacing.s),
+        ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -157,6 +178,13 @@ private fun OrderItemRow(item: OrderItemUi) {
             )
         }
     }
+}
+
+/** Cor da faixa lateral do card; no tempo normal não há faixa. */
+internal fun WaitBand.stripeColor(colors: KdsColors): Color? = when (this) {
+    WaitBand.NORMAL -> null
+    WaitBand.ATTENTION -> colors.attention
+    WaitBand.LATE -> colors.late
 }
 
 private fun WaitBand.toLevel(): WaitLevel = when (this) {

@@ -42,11 +42,13 @@ fun anItem(
     quantity: Int = 1,
     productionArea: ProductionArea = ProductionArea.CHAPA,
     modifiers: List<Modifier> = emptyList(),
+    note: String? = null,
+    id: String = name,
 ): OrderItem = OrderItem(
-    id = name,
+    id = id,
     name = name,
     productionArea = productionArea,
     quantity = quantity,
-    note = null,
+    note = note,
     modifiers = modifiers.toImmutableList(),
 )

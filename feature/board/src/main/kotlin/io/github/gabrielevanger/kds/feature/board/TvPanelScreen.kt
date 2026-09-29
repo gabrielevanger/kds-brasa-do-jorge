@@ -15,6 +15,7 @@ import io.github.gabrielevanger.kds.core.designsystem.theme.KdsTheme
 import io.github.gabrielevanger.kds.core.ui.ConnectionBanner
 import io.github.gabrielevanger.kds.core.ui.EQUAL_SHARE
 import io.github.gabrielevanger.kds.core.ui.KitchenClockProvider
+import io.github.gabrielevanger.kds.core.ui.KitchenTopBar
 
 @Composable
 fun TvPanelRoute(viewModel: BoardViewModel = hiltViewModel()) {
@@ -40,6 +41,7 @@ fun TvPanelScreen(state: BoardUiState, modifier: Modifier = Modifier) {
             .padding(spacing.s),
         verticalArrangement = Arrangement.spacedBy(spacing.s),
     ) {
+        KitchenTopBar(connection = state.connection)
         ConnectionBanner(connection = state.connection)
         BoardColumns(columns = state.columns, onAdvance = null, modifier = Modifier.weight(EQUAL_SHARE))
     }

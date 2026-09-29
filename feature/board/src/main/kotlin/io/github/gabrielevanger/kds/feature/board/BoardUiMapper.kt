@@ -45,7 +45,7 @@ internal object BoardUiMapper {
             createdAt = order.createdAt,
             itemCount = order.itemCount,
             isLarge = order.isLarge,
-            items = items.map(KitchenUiMapper::toItem).toImmutableList(),
+            items = KitchenUiMapper.toItems(items),
             note = order.note,
             tone = tone,
             isAwaitingServer = kitchenOrder.pendingTransition != null,

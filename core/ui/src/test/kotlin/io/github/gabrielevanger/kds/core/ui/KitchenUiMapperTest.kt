@@ -60,6 +60,83 @@ class KitchenUiMapperTest {
         )
     }
 
+    @Nested
+    inner class `Itens do card` {
+
+        private val semCebola = listOf(Modifier(group = "Remover", option = "Sem cebola"))
+
+        @Test
+        fun `linhas iguais viram uma so com a quantidade somada`() {
+            val items = KitchenUiMapper.toItems(
+                listOf(
+                    anItem(name = "Onion Rings", quantity = 2, id = "a"),
+                    anItem(name = "Onion Rings", quantity = 1, id = "b"),
+                    anItem(name = "Onion Rings", quantity = 1, id = "c"),
+                ),
+            )
+
+            assertEquals(listOf("Onion Rings" to 4), items.map { it.name to it.quantity })
+        }
+
+        /** Juntar um lanche sem cebola com um normal apagaria o modificador de um deles. */
+        @Test
+        fun `modificadores diferentes continuam em linhas separadas`() {
+            val items = KitchenUiMapper.toItems(
+                listOf(
+                    anItem(name = "Smash Bacon", id = "a", modifiers = semCebola),
+                    anItem(name = "Smash Bacon", id = "b"),
+                    anItem(name = "Smash Bacon", id = "c", modifiers = semCebola),
+                ),
+            )
+
+            assertEquals(listOf(2, 1), items.map { it.quantity })
+            assertEquals(
+                listOf(listOf("Sem cebola"), emptyList()),
+                items.map { item ->
+                    item.modifiers.map { it.text }
+                },
+            )
+        }
+
+        @Test
+        fun `observacoes diferentes continuam em linhas separadas`() {
+            val items = KitchenUiMapper.toItems(
+                listOf(
+                    anItem(name = "Smash Bacon", id = "a", note = "Bem passado"),
+                    anItem(name = "Smash Bacon", id = "b", note = "Mal passado"),
+                ),
+            )
+
+            assertEquals(listOf("Bem passado", "Mal passado"), items.map { it.note })
+        }
+
+        @Test
+        fun `ordem segue a primeira aparicao de cada item`() {
+            val items = KitchenUiMapper.toItems(
+                listOf(
+                    anItem(name = "Batata Rústica", id = "a"),
+                    anItem(name = "Smash Bacon", id = "b"),
+                    anItem(name = "Batata Rústica", id = "c"),
+                ),
+            )
+
+            assertEquals(listOf("Batata Rústica" to 2, "Smash Bacon" to 1), items.map { it.name to it.quantity })
+        }
+
+        /** A key identifica a linha na tela: duas linhas agrupadas não podem repetir a mesma. */
+        @Test
+        fun `cada linha agrupada tem key unica`() {
+            val items = KitchenUiMapper.toItems(
+                listOf(
+                    anItem(name = "Smash Bacon", id = "a", modifiers = semCebola),
+                    anItem(name = "Smash Bacon", id = "b"),
+                ),
+            )
+
+            assertEquals(items.size, items.map { it.key }.toSet().size)
+        }
+    }
+
     @Test
     fun `alerta agrupa itens iguais que o servidor envia em linhas separadas`() {
         val order = anOrder(

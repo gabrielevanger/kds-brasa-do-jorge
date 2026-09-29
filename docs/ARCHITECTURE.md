@@ -207,6 +207,7 @@ O store e o escopo de coroutines são `@Singleton`, interfaces são ligadas com 
 
 - **Alertas de cancelamento vivem em memória.** Se o app reiniciar com um alerta sem CIENTE, ele se perde: o `snapshot` traz o pedido já cancelado, que é tratado como histórico. Aceitável com o app aberto o turno todo; a v2 persiste os alertas localmente.
 - **Toque perdido se o app morrer na janela de 5 s.** Custo aceito do envio adiado; a v2 pode persistir o envio agendado.
+- **O tempo de espera depende do relógio do aparelho.** Os timers comparam o horário do pedido, gravado pelo servidor, com o relógio local; um aparelho com a hora errada mostra tempos errados. Apareceu na validação: o emulador de TV estava quase duas horas atrasado, e todos os timers ficavam em 00:00, porque para ele os pedidos tinham sido criados no futuro. Com a hora automática, como em qualquer aparelho de uso real, não acontece. A v2 calcula a diferença entre o relógio do servidor e o do aparelho e corrige os timers.
 - **Fila offline de ações.** Hoje uma ação sem rede volta com aviso; a v2 pode enfileirar e reenviar.
 - **Build release com R8 e medição em tablet físico.** Exige regras de keep para Hilt, serialization e Retrofit; um erro nelas quebra o app só no release, risco desnecessário perto da entrega.
 - **Densidade do board.** Poucos cards por coluna no tablet de 1920x1200, priorizando leitura a 2 m; os itens agrupados e os filtros na barra superior devolveram parte da altura.

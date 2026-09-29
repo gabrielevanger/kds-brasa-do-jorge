@@ -1,143 +1,184 @@
-# Desafio Front-end · Pigz
+# KDS Brasa do Jorge
 
-Olá! Este é o desafio técnico de Front-end da Pigz. Ele é o **mesmo para todos os níveis** — júnior, pleno ou sênior. Você entrega até onde conseguir, e a **profundidade da sua entrega é o que mostra o seu nível** (não precisa dizer qual é).
+Kitchen Display System para a hamburgueria Brasa do Jorge, feito para o [desafio técnico da Pigz](https://github.com/orangebr/desafio-frontend-hamburgueria). Os pedidos chegam em tempo real do mock do desafio e substituem a impressora de comandas: a cozinha vê a fila no tablet, o garçom recebe os pedidos prontos no celular e uma TV na parede mostra a fila para todos.
 
-Aqui a gente não te entrega uma tela pronta pra você copiar. A gente te apresenta um problema de um lojista e quer ver como você chega da dor até uma solução funcionando: entender o que importa, decidir o que fazer, projetar e construir.
+Android nativo em Kotlin com Jetpack Compose. Um único APK assume o papel do aparelho:
 
-Não existe um documento de requisitos fechado. Você é dono da solução. Boa parte do que a gente avalia é o que você decide construir, o que decide deixar de fora, e como defende essas escolhas.
+| Aparelho | Tela | Para quem |
+|---|---|---|
+| Tablet na bancada | Board com as colunas Na fila, Preparando e Pronto | Cozinha |
+| Celular | Expedição: pedidos prontos e ENTREGUE | Garçom |
+| TV (Android TV ou Google TV) | Painel somente leitura | Todos, de longe |
 
-## Sobre usar IA
+## O que o app faz
 
-Pode usar, e a gente recomenda. Claude, Copilot, o que você usa no dia a dia. Trabalhamos com IA aqui o tempo todo, então não faz sentido te avaliar num cenário que não é o real.
+- **Tempo real por SSE**, com reconexão automática e aviso "Reconectando"; na queda, a tela mantém o último estado.
+- **Fila por ordem de chegada** com tempo de espera e faixas de atraso (atenção a partir de 8 min, atrasado a partir de 15 min) em cor, ícone e texto, e faixa lateral nos cards atrasados.
+- **Um toque para avançar**, sem confirmação, com DESFAZER por 5 segundos, inclusive no ENTREGUE.
+- **Modificadores em destaque** ("sem cebola", "mal passado"), itens iguais somados numa linha e selo GRANDE para pedidos de 5 itens ou mais.
+- **Origem forte:** MESA 4, BALCÃO, iFOOD, WHATSAPP, PIGZ e os demais canais.
+- **Cancelamento de pedido em andamento** vira alerta com alarme até alguém tocar em CIENTE, inclusive o que acontecer durante uma queda de rede.
+- **Filtro por estação** (Chapa, Fritadeira, Montagem).
+- **Expedição no celular:** bip e vibração quando um pedido fica pronto, COBRAR para pedido não pago e tempo no balcão.
+- **Tema claro e escuro**, seguindo o modo do Android; a TV fica sempre escura.
 
-Não estamos medindo se você digitou o código na mão. Estamos olhando se você sabe conduzir a ferramenta, revisar o que sai dela, jogar fora o que não serve e sustentar cada decisão.
+## Como rodar
 
-Por isso, no seu README, conte como usou IA: onde ela ajudou, onde ela errou e você corrigiu, e o que você fez questão de decidir por conta própria. Ser transparente conta a favor. Entregar código que você não sabe explicar conta contra.
+### Pré-requisitos
 
-## O cenário: Brasa do Jorge
+- **Node.js 18 ou mais novo**, para o mock.
+- **Android Studio** com o Android SDK 37 (ou só o SDK, com `ANDROID_HOME` apontando para ele).
+- **JDK 17** para rodar o Gradle. O Gradle baixa sozinho o JDK 21 que os testes usam.
+- **Um emulador ou aparelho** com Android 8.0 ou mais novo. Para ver as três telas: um tablet (perfil "Small Tablet", 1920x1200), um celular ("Medium Phone") e uma TV ("Television 1080p").
 
-A **Brasa do Jorge** é uma hamburgueria artesanal de bairro, ponto de rua, 4 anos de casa, fama de "melhor smash da região". Você foi até lá conhecer a operação. Segue o que você viu e ouviu.
+### 1. Subir o mock
 
-### Os números (mês passado)
-- ~**3.200 pedidos/mês** (~110 por dia), ticket médio **R$ 52**
-- Faturamento ~**R$ 166 mil/mês**
-- **60% do movimento** se concentra sexta e sábado, das **19h às 22h30**
-- Canais de pedido: **Salão/balcão 35%** · **WhatsApp 25%** · **Apps (iFood + Pigz) 40%**
-- No pico, chegam **até 14 pedidos em 20 minutos** — todos na mesma cozinha
+Na raiz do repositório:
 
-### A equipe (8 pessoas)
-- **Cozinha (4):** 1 chapeiro, 1 auxiliar de chapa, 1 na fritadeira (batata/frango), 1 na montagem/finalização
-- **Salão (2):** 2 garçons, que também levam o pedido de delivery até o balcão de retirada
-- **Frente (1):** 1 caixa/atendente de balcão
-- **Seu Jorge:** circula, apaga incêndio, às vezes monta lanche
-
-### O layout da cozinha (linha de produção)
+```bash
+node mock/server.js
 ```
-[ CHAPA ] → [ FRITADEIRA ] → [ BANCADA DE MONTAGEM ] → [ EXPEDIÇÃO / balcão de saída ]
+
+O mock sobe em `http://localhost:4000` e cria um pedido novo a cada 5 segundos.
+
+### 2. Instalar o app
+
+Com o emulador aberto, em outro terminal:
+
+```bash
+./gradlew :app:installDebug
 ```
-- Salão com **10 mesas**; balcão de retirada separado para delivery
-- Hoje o único vínculo entre cozinha, salão e delivery é **uma impressora térmica** cuspindo comanda de papel
 
-### O cardápio
+No Windows, use `.\gradlew.bat :app:installDebug`. Depois, abra "KDS Brasa do Jorge" no aparelho: o tablet mostra o board, o celular mostra a Expedição e a TV mostra o painel.
 
-![Cardápio da Brasa do Jorge](imagens/BrasaDoJorge-cardapio.jpg)
+O emulador enxerga o computador em `10.0.2.2`, que é o endereço padrão do app. Num **aparelho físico** na mesma rede Wi-Fi, informe o IP do computador:
 
-É o que sai da cozinha — hambúrgueres na chapa, fritos na fritadeira, bebidas e shakes na montagem. É esse o conteúdo dos pedidos que vão cair no painel.
+```bash
+./gradlew :app:installDebug -Pkds.serverUrl=http://192.168.0.10:4000/
+```
 
-### Seu Jorge desabafa (na visita, ele disse:)
+Ou deixe o endereço fixo em `local.properties`, que não vai para o Git:
 
-> *"Sexta à noite chega pedido do balcão, do zap e do app tudo junto. Vira uma pilha de papel na bancada. Semana passada uma comanda caiu atrás da chapa e o cara esperou 40 minutos."*
+```properties
+kds.serverUrl=http://192.168.0.10:4000/
+```
 
-> *"Meu problema não é fazer o lanche, é **saber qual fazer primeiro**. Às vezes o último a chegar sai antes e quem tá esperando há meia hora fica pra trás."*
+### 3. Rodar os testes e as verificações
 
-> *"Tem pedido que é **uma coca** e pedido que é **quatro combos**. Na pilha de papel parece tudo igual, aí a gente se atrapalha."*
+Os mesmos passos do CI:
 
-> *"A batata sai da fritadeira e o hambúrguer ainda tá na chapa — ou o contrário. **Nada sincroniza**, um dos dois sempre esfria esperando o outro."*
+```bash
+./gradlew test
+```
 
-> *"Quando fica pronto, o garçom não sabe. Ou ele **fica vindo na cozinha toda hora perguntar**, ou o lanche **esfria no balcão** esperando alguém perceber."*
+```bash
+./gradlew ktlintCheck :build-logic:convention:ktlintCheck :app:lintDebug
+```
 
-> *"Cliente pede **sem cebola, ponto mal passado, cheddar extra** — isso se perde no papel. Volta o prato, é retrabalho e prejuízo."*
+São 263 testes, inclusive os de interface, que rodam na JVM com Robolectric, sem emulador.
 
-> *"Delivery e salão brigam pela mesma cozinha. Não sei o que priorizar: o cara que tá na mesa olhando pra mim ou o motoboy que já chegou?"*
+### Simular a cozinha
 
-> *"A impressora **vive travando e acabando papel** no pior momento."*
+O mock só cria pedidos; quem avança as etapas é a cozinha. Para ver a Expedição e os alertas sem tocar no tablet, mude um pedido direto no mock (troque o `12` pelo número de um pedido da fila):
 
-> *"Meus funcionários **não podem ficar clicando** — mão suja, correria. Tem que ser no olhar."*
+```bash
+curl -X PATCH http://localhost:4000/orders/12 -H "Content-Type: application/json" -d '{"stage":"PREPARING"}'
+```
 
-> *"Às vezes o cliente **desiste** e a cozinha já começou o pedido. Ninguém avisa."*
+```bash
+curl -X PATCH http://localhost:4000/orders/12 -H "Content-Type: application/json" -d '{"stage":"READY"}'
+```
 
-E é assim que esses pedidos chegam hoje, numa sexta no pico:
+O primeiro põe o pedido em preparo; o segundo o deixa pronto, e o celular bipa e vibra. Com `{"stage":"CANCELED"}` num pedido em preparo ou pronto, o alerta de cancelamento aparece.
 
-![A cozinha da Brasa do Jorge no pico: impressora cuspindo comanda, papel na bancada, no varal e no chão](imagens/BrasaDoJorge-cozinha.jpg)
+No PowerShell do Windows, `curl` é outro comando; use:
 
-E, do outro lado da passagem, o salão no mesmo horário — mesas cheias, motoboy parado na retirada e o garçom sem saber o que priorizar:
+```powershell
+Invoke-RestMethod -Method Patch -Uri http://localhost:4000/orders/12 -ContentType 'application/json' -Body '{"stage":"READY"}'
+```
 
-![O salão da Brasa do Jorge no pico: mesas cheias, motoboy esperando na retirada e a cozinha visível pela janela de passagem](imagens/BrasaDoJorge-salao.jpg)
+Para simular o pico, com um pedido novo a cada 0,3 segundo:
 
-## A missão
+```bash
+EVENT_INTERVAL_MS=300 node mock/server.js
+```
 
-Seu Jorge ouviu falar de KDS (Kitchen Display System, o painel de pedidos da cozinha) e acha que resolve a vida dele. Mas ele não sabe o que é, nem o que precisa ter. Isso é com você.
+No PowerShell: `$env:EVENT_INTERVAL_MS=300; node mock/server.js`.
 
-A missão tem quatro partes:
+### Tema claro
 
-1. Entender a dor. Leia o cenário acima e identifique o que realmente pesa. Nem tudo tem o mesmo peso.
-2. Decidir o escopo. Defina o que o KDS resolve agora e o que fica pra depois. Cortar bem faz parte da nota.
-3. Projetar. Desenhe como o KDS funciona: o fluxo, as telas, a hierarquia da informação. Não precisa ser um mockup caprichado no Figma; pode ser esboço, wireframe ou direto no código. Mas queremos entender por que ficou assim.
-4. Construir. Entregue uma versão navegável e funcional, consumindo o back que já deixamos pronto (veja abaixo).
+O app segue o modo do Android: em Configurações, Tela, desligue o tema escuro. No emulador, também dá para trocar pelo terminal, e a tela muda sem reabrir o app:
 
-Não esperamos que você resolva todas as falas do Seu Jorge. Esperamos que você escolha as certas, com critério, e explique o porquê.
+```bash
+adb shell cmd uimode night no
+```
 
-## Requisitos técnicos
+### Instalar numa TV
 
-O KDS é um app Android para rodar num tablet na cozinha (e, se der, também no telefone e numa TV na parede). Não é um site.
+É preciso uma TV com Android TV ou Google TV, ou uma TV comum com um aparelho desses no HDMI (Chromecast com Google TV, Mi Box). O APK é o mesmo. Com a depuração ativada na TV:
 
-### Stack
+```bash
+adb connect 192.168.0.20
+```
 
-Você pode fazer em **Kotlin** (Android nativo, Jetpack Compose) ou em **React Native**. Usamos as duas aqui no dia a dia. Como esse desafio é um app nativo de tablet de cozinha, nossa preferência é Kotlin — mas React Native é igualmente bem-vindo e não perde ponto. Escolha a que você domina melhor e justifique a escolha.
+```bash
+./gradlew :app:installDebug
+```
 
-Use tipagem forte: Kotlin já é; em React Native, TypeScript com `strict` ligado. É o nosso padrão.
+Sem computador, dá para instalar pela própria TV com o app "Downloader", a partir de um link direto para o APK.
 
-### O que vamos olhar de perto
+## Decisões e trade-offs
 
-São as dimensões que a gente avalia — em qualquer nível. O quanto você avança em cada uma é o que revela a sua senioridade:
+O detalhe de cada decisão, com as alternativas e o custo, está em [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). Em resumo:
 
-- **Tempo real.** Pedido novo aparece sozinho na tela, sem ninguém dar refresh. Você escolhe a técnica (WebSocket, SSE, polling…), mas queremos ver a escolha justificada e o que costuma ser esquecido tratado:
-  - Reconexão quando a internet da cozinha cai (e ela cai).
-  - Sem duplicar pedido quando o mesmo evento chega duas vezes.
-- **Aguentar o pico.** A tela continua fluida com a fila cheia (pense em dezenas ou centenas de pedidos ativos e um novo a cada poucos segundos). Lista pensada para escala.
-- **Ciclo de vida do pedido claro.** As transições de status modeladas com intenção, não com `if` espalhado pela tela. Os status que o back usa estão no [README do mock](./mock/README.md).
-- **Responsividade por contexto de uso.** O tablet fica na horizontal, no calor da cozinha. Pense em como isso muda no telefone e numa TV vista de longe.
-- **Não morrer quando o back falha.** Internet caiu? Avise ("reconectando…") e mantenha o último estado conhecido. Nunca tela branca, nunca erro cru na cara do cozinheiro.
-- **UX de cozinha.** Mão suja, correria, sem tempo de mirar o toque: alvos grandes, informação legível a distância, estados que se distinguem sem depender só de cor. Um contador do tempo de espera do pedido à vista ajuda muito.
-- **Testes onde importa.** Não é cobertura de enfeite. É teste na lógica que quebra em produção: as transições de status, o evento duplicado, um componente central.
+- **Kotlin e Compose.** É a preferência da Pigz para um app nativo de tablet de cozinha e a stack que domino. Tipagem forte, `when` exaustivo na máquina de estados e testes rápidos na JVM.
+- **SSE para o tempo real.** O mock já oferece, o fluxo é do servidor para o cliente, e as poucas ações da cozinha cabem em REST. Polling teria latência e carga constante; WebSocket, um canal nos dois sentidos que ninguém usa.
+- **O que costuma ser esquecido no tempo real:** o OkHttp não reconecta sozinho (reconexão com backoff de 1 a 30 s e jitter), a conexão pode ficar muda (heartbeat de 15 s no mock e timeout de leitura de 45 s no app) e a cozinha pode ter rede local sem internet.
+- **Evento duplicado não duplica pedido.** O mock ganhou um número de versão por pedido, e o reducer só aplica versão maior: evento repetido, fora de ordem ou eco do próprio toque não muda nada.
+- **Ciclo de vida numa máquina de estados**, a mesma tabela no app e no mock, que agora recusa transição inválida com 409 e o pedido atual.
+- **Desfazer por envio adiado.** O toque muda o card na hora e o envio sai depois de 5 segundos; desfazer cancela o envio. Custo aceito: se o app morrer nesses 5 segundos, o toque se perde e o card fica na etapa anterior.
+- **Hilt em vez de Koin**, pela validação do grafo na compilação: o app roda sozinho no tablet durante o pico.
+- **Domínio em Kotlin puro**, num módulo sem Android: o compilador garante que nenhuma regra dependa da tela.
+- **Aguentar o pico:** lista com chave estável, mapeamento fora da thread principal e um relógio único que recompõe só o timer. Medido no emulador com centenas de pedidos e um novo a cada 0,3 s, a carga aumenta os quadros lentos mas não cria travadas longas (números em [ARCHITECTURE.md](docs/ARCHITECTURE.md#aguentar-o-pico)).
 
-### O back
+## O que priorizei e o que cortei
 
-Já deixamos um mock server pronto na pasta [`/mock`](./mock). Ele:
+Priorizei o núcleo que resolve as dores mais caras do Seu Jorge: tempo real confiável, a fila que não duplica nem some pedido, o alerta de cancelamento e o board legível de longe. Depois vieram a Expedição no celular (o lanche esfriando no balcão) e, por fim, o painel de TV, que o desafio marca como opcional.
 
-- Expõe uma API REST para listar pedidos e mudar o status de um pedido.
-- Empurra eventos em tempo real (pedidos novos e atualizações) via SSE.
-- Roda sem instalar nada, só com Node. Veja o [README do mock](./mock/README.md).
+Ficaram de fora, por decisão:
 
-"Encostar no back" aqui é literal: pode ler, ajustar e estender esse mock (um campo novo, um endpoint, a cadência dos eventos) pra servir a sua solução. Queremos ver como você lê código que não é seu e mexe nele com cuidado, não que escreva um backend do zero. Você não precisa (nem deve) construir um back próprio; o foco é o front.
+- **Sincronizar chapa e fritadeira** e **pronto por item**: o back só tem etapa por pedido e não tem tempo de preparo por item.
+- **Priorização automática entre delivery e salão**: é decisão do dono, não do sistema; o KDS mostra a origem forte para ele decidir.
+- **Build release com R8 e medição num tablet físico**: ligar o R8 exige regras para Hilt, serialization e Retrofit, e um erro nelas quebra o app só no release, risco desnecessário perto da entrega.
 
-## Como entregar
+## O que faria numa v2
 
-- Repositório Git público no seu GitHub, com o histórico de commits preservado. Commits pequenos e com mensagem clara contam a favor; um único commit gigante "primeira versão" conta contra.
-- Um README seu explicando:
-  - Como rodar, com comandos reais testados numa máquina limpa. Se não roda pra gente, não conseguimos avaliar.
-  - Suas decisões e trade-offs: o que priorizou, o que cortou, por que escolheu tal técnica de tempo real, o que faria numa v2.
-  - Como você usou IA (veja a seção no começo).
-- Um vídeo ou GIF curto do KDS reagindo a um pedido novo em tempo real é opcional, mas ajuda.
+- Guardar os alertas de cancelamento e os envios agendados no aparelho, para sobreviverem a um reinício do app.
+- Fila offline de ações, reenviada quando a rede voltar.
+- Build release com R8 e medição de fluidez num tablet real.
+- Métricas de tempo médio por etapa, para o dono ver o gargalo.
+- Pronto por item e sincronização de estações, quando o back tiver esses dados.
 
-Quando terminar, envie o link do seu repositório para **desafio@pigz.com.br** para a gente avaliar.
+## Premissas
 
-Se não der tempo de fazer tudo, entregue mesmo assim e conte o que ficou de fora e por quê. Preferimos um recorte bem-feito e bem explicado a tudo pela metade.
+As premissas estão em [docs/SPECS.md](docs/SPECS.md#premissas), junto com os requisitos e onde cada um foi atendido. As principais:
 
-## Sobre o tempo
+- Os horários do mock vêm em UTC sem o "Z"; o fuso de origem é configurável.
+- O primeiro toque leva um pedido da fila direto para o preparo, porque no mock ninguém confirma pedidos.
+- O tempo de espera conta desde a criação do pedido; na Expedição, o tempo no balcão conta desde a última alteração do pedido pronto.
+- Um tablet na montagem com a visão geral, e "pronto" marcado no pedido inteiro.
 
-Não cronometramos, mas o desafio foi pensado pra caber num fim de semana sem virar noites. Se você está indo muito além disso, provavelmente está construindo mais do que a gente pediu, e saber parar no ponto também é uma decisão de sênior.
+## Como usei IA
 
-Qualquer dúvida sobre o cenário, decida como achar melhor e anote a premissa no seu README. Interpretar a ambiguidade faz parte.
+Usei o Claude Code do começo ao fim, em passos pequenos: a IA explicava o passo, eu revisava, e nenhum commit saiu sem eu ler a mensagem. Todo commit leva o rodapé de coautoria da IA. O registro completo, com data, está em [docs/AI_USAGE.md](docs/AI_USAGE.md).
 
-Bom desafio, e divirta-se resolvendo o problema do Seu Jorge.
+- **Onde ajudou:** ler o mock e achar as armadilhas antes de escrever o app, apresentar alternativas com custo para cada decisão, escrever código e testes, e investigar no emulador (som, vibração, fluidez).
+- **Onde errou e foi corrigida:** testes que não testavam o que diziam, pegos por teste de mutação; bugs que só apareceram no emulador com todos os testes verdes (um pedido escondido acima do topo da lista, o ENTREGUE sem desfazer); comandos errados que ela me passou; e uma conclusão apressada sobre a fluidez, corrigida quando sugeri medir o build release.
+- **O que eu decidi:** Hilt, a estrutura modular, o desfazer por envio adiado, as regras de negócio confirmadas, nada de números nem textos fixos no código, o tema claro e o polimento visual, e a forma de trabalhar.
+
+## Documentação
+
+- [docs/SPECS.md](docs/SPECS.md): dores, requisitos, onde cada um foi atendido, premissas e o que ficou fora.
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): módulos, caminho do pedido, decisões e trade-offs, testes e limitações.
+- [docs/AI_USAGE.md](docs/AI_USAGE.md): como a IA foi usada, onde errou e o que foi decidido.
+- [mock/README.md](mock/README.md): o mock, com as extensões feitas nele.

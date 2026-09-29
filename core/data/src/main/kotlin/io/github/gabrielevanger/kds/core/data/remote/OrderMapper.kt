@@ -60,7 +60,7 @@ class OrderMapper(private val sourceZone: ZoneId) {
 
     /** Status desconhecido é tratado como não pago: é melhor o garçom conferir do que deixar de cobrar. */
     private fun paymentStatusOf(value: String): PaymentStatus = when (value) {
-        "PAID" -> PaymentStatus.PAID
+        ServerProtocol.PAYMENT_STATUS_PAID -> PaymentStatus.PAID
         else -> PaymentStatus.NOT_PAID
     }
 

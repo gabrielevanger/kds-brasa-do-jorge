@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="board_column_queued">NA FILA</string>
+    <string name="board_column_preparing">PREPARANDO</string>
+    <string name="board_column_ready">PRONTO</string>
+
+    <string name="board_action_start">INICIAR</string>
+    <string name="board_action_ready">PRONTO</string>
+    <string name="board_action_deliver">ENTREGUE</string>
+
+    <string name="board_filter_all">TODAS</string>
+    <string name="board_filter_chapa">CHAPA</string>
+    <string name="board_filter_fritadeira">FRITADEIRA</string>
+    <string name="board_filter_montagem">MONTAGEM</string>
+
+    <string name="board_origin_table">MESA %1$d</string>
+    <string name="board_origin_counter">BALCÃO</string>
+    <string name="board_origin_whatsapp">WHATSAPP</string>
+    <string name="board_origin_ifood">iFOOD</string>
+    <string name="board_origin_pigz">PIGZ</string>
+    <string name="board_origin_web_menu">CARDÁPIO WEB</string>
+    <string name="board_origin_loyalty">CLIENTE FIEL</string>
+    <string name="board_origin_other">OUTRO CANAL</string>
+
+    <plurals name="board_item_count">
+        <item quantity="one">%1$d item</item>
+        <item quantity="other">%1$d itens</item>
+    </plurals>
+    <string name="board_large_order">GRANDE</string>
+    <string name="board_item_quantity">%1$d×</string>
+    <string name="board_empty_column">Nenhum pedido</string>
+</resources>

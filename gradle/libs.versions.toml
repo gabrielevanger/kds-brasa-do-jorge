@@ -24,6 +24,8 @@ turbine = "1.2.1"
 mockk = "1.14.11"
 androidxTestExtJunit = "1.3.0"
 androidxTestRunner = "1.7.0"
+androidxTestCore = "1.7.0"
+robolectric = "4.17"
 ktlintGradle = "14.2.0"
 # Versão do motor do ktlint, fixada para o resultado não mudar com o plugin.
 ktlint = "1.8.0"
@@ -33,6 +35,8 @@ compileSdk = "37"
 targetSdk = "37"
 minSdk = "26"
 jvmToolchain = "17"
+# JVM que executa os testes: o Robolectric exige Java 21 para simular o Android 37.
+testJvm = "21"
 
 [libraries]
 # Plugins do Gradle usados pelos plugins de convenção (build-logic)
@@ -85,11 +89,15 @@ retrofit-converter-kotlinx-serialization = { group = "com.squareup.retrofit2", n
 junit-bom = { group = "org.junit", name = "junit-bom", version.ref = "junitJupiter" }
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter" }
 junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
+# Executa na JUnit Platform os testes de UI do Compose, que usam o formato JUnit 4.
+junit-vintage-engine = { group = "org.junit.vintage", name = "junit-vintage-engine" }
 junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestExtJunit" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }
+androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidxTestCore" }
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

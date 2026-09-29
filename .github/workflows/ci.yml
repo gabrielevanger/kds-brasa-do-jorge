@@ -22,11 +22,14 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: JDK 17
+      # 17 compila o projeto; 21 executa os testes, exigido pelo Robolectric. O último da lista é o padrão.
+      - name: JDK 21 e 17
         uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: "17"
+          java-version: |
+            21
+            17
 
       # Configura o cache do Gradle e valida o checksum do wrapper commitado.
       - name: Gradle

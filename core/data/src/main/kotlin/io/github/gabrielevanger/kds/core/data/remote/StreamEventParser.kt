@@ -14,9 +14,13 @@ class StreamEventParser(private val json: Json, private val mapper: OrderMapper,
 
     fun parse(type: String?, data: String): StreamEvent? = try {
         when (type) {
-            "snapshot" -> StreamEvent.Snapshot(json.decodeFromString<List<OrderDto>>(data).mapNotNull(::toDomain))
+            ServerProtocol.EVENT_SNAPSHOT -> StreamEvent.Snapshot(
+                json.decodeFromString<List<OrderDto>>(data).mapNotNull(::toDomain),
+            )
 
-            "order.created", "order.updated" -> toDomain(json.decodeFromString<OrderDto>(data))
+            ServerProtocol.EVENT_ORDER_CREATED, ServerProtocol.EVENT_ORDER_UPDATED -> toDomain(
+                json.decodeFromString<OrderDto>(data),
+            )
                 ?.let(StreamEvent::OrderChanged)
 
             else -> null

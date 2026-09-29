@@ -16,6 +16,7 @@ import io.github.gabrielevanger.kds.core.data.remote.OrderMapper
 import io.github.gabrielevanger.kds.core.data.remote.OrdersApi
 import io.github.gabrielevanger.kds.core.data.remote.ReconnectingOrderStream
 import io.github.gabrielevanger.kds.core.data.remote.RemoteOrderCommands
+import io.github.gabrielevanger.kds.core.data.remote.ServerProtocol
 import io.github.gabrielevanger.kds.core.data.remote.SseOrderConnection
 import io.github.gabrielevanger.kds.core.data.remote.StreamEventParser
 import io.github.gabrielevanger.kds.core.domain.kitchen.OrderStore
@@ -94,7 +95,7 @@ object DataModule {
     ): OrderStream {
         val connection = SseOrderConnection(
             eventSourceFactory = EventSources.createFactory(client),
-            eventsUrl = "${config.baseUrl}events".toHttpUrl(),
+            eventsUrl = "${config.baseUrl}${ServerProtocol.EVENTS_PATH}".toHttpUrl(),
             parser = StreamEventParser(json, mapper, log),
         )
         return ReconnectingOrderStream(connection::open, BackoffPolicy(), networkMonitor, log)

@@ -25,6 +25,13 @@ data class Order(
 ) {
     /** Soma das quantidades: diferencia "uma coca" de "quatro combos". */
     val itemCount: Int = items.sumOf { it.quantity }
+
+    /** Pedido que ocupa a cozinha por mais tempo e merece destaque na fila. */
+    val isLarge: Boolean get() = itemCount >= LARGE_ORDER_ITEM_COUNT
+
+    companion object {
+        const val LARGE_ORDER_ITEM_COUNT = 5
+    }
 }
 
 data class OrderItem(

@@ -30,6 +30,10 @@
     <string name="board_item_quantity">%1$d×</string>
     <string name="board_empty_column">Nenhum pedido</string>
 
+    <string name="board_connection_connecting">CONECTANDO AO SERVIDOR</string>
+    <string name="board_connection_reconnecting">RECONECTANDO (tentativa %1$d)</string>
+    <string name="board_connection_stale">Os pedidos abaixo podem estar desatualizados.</string>
+
     <string name="board_alert_title">%1$s CANCELADO · NÃO FAZER</string>
     <string name="board_alert_context">Estava em %1$s · %2$s</string>
     <string name="board_alert_item">%1$d× %2$s</string>

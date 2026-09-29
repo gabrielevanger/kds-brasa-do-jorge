@@ -104,6 +104,7 @@ fun BoardScreen(
             .padding(spacing.s),
         verticalArrangement = Arrangement.spacedBy(spacing.s),
     ) {
+        ConnectionBanner(connection = state.connection)
         CancellationAlerts(alerts = state.cancellationAlerts, onDismiss = onDismissAlert)
         StationFilterRow(selected = state.stationFilter, onSelected = onStationFilterSelected)
         Row(modifier = Modifier.weight(EQUAL_SHARE), horizontalArrangement = Arrangement.spacedBy(spacing.s)) {

@@ -4,9 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenSignal
-import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenSignals
 import io.github.gabrielevanger.kds.core.domain.kitchen.OrderStore
 import io.github.gabrielevanger.kds.core.domain.model.OrderId
+import io.github.gabrielevanger.kds.core.ui.KitchenNotice
+import io.github.gabrielevanger.kds.core.ui.KitchenUiMapper
+import io.github.gabrielevanger.kds.core.ui.signals
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -14,7 +16,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
@@ -30,20 +31,9 @@ class BoardViewModel @Inject constructor(private val store: OrderStore) : ViewMo
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_SHARING_AFTER_MILLIS), BoardUiState.Initial)
 
     /** Avisos pontuais já com o número do pedido e a etapa em que o card ficou. */
-    val notices: Flow<BoardNotice> = store.notices.mapNotNull { BoardUiMapper.mapNotice(it, store.state.value) }
+    val notices: Flow<KitchenNotice> = store.notices.mapNotNull { KitchenUiMapper.mapNotice(it, store.state.value) }
 
-    /**
-     * Sinais sonoros entre estados consecutivos. A comparação parte do estado já exibido quando a
-     * coleta começa: voltar ao app ou girar a tela não repete avisos de pedidos antigos.
-     */
-    val signals: Flow<Set<KitchenSignal>> = flow {
-        var previous = store.state.value
-        store.state.collect { next ->
-            val signals = KitchenSignals.between(previous, next)
-            if (signals.isNotEmpty()) emit(signals)
-            previous = next
-        }
-    }
+    val signals: Flow<Set<KitchenSignal>> = store.state.signals(BoardUiMapper::signals)
 
     fun onAdvance(orderId: OrderId) = store.advance(orderId)
 

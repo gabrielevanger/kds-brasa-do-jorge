@@ -1,4 +1,4 @@
-package io.github.gabrielevanger.kds.feature.board
+package io.github.gabrielevanger.kds.core.ui
 
 import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenSignal
 import kotlin.time.Duration.Companion.milliseconds
@@ -16,6 +16,18 @@ class KitchenSoundPolicyTest {
     @Test
     fun `pedido novo toca bip`() {
         assertEquals(KitchenSound.BEEP, policy.soundFor(newOrder, now = 10.seconds))
+    }
+
+    @Test
+    fun `pedido pronto toca bip`() {
+        assertEquals(KitchenSound.BEEP, policy.soundFor(setOf(KitchenSignal.ORDER_READY), now = 10.seconds))
+    }
+
+    @Test
+    fun `pedido pronto logo depois de um pedido novo respeita o intervalo`() {
+        policy.soundFor(newOrder, now = 0.seconds)
+
+        assertNull(policy.soundFor(setOf(KitchenSignal.ORDER_READY), now = 1.seconds))
     }
 
     @Test

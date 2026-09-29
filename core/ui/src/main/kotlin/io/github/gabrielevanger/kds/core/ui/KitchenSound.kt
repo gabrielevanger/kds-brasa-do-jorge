@@ -1,4 +1,4 @@
-package io.github.gabrielevanger.kds.feature.board
+package io.github.gabrielevanger.kds.core.ui
 
 import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenSignal
 import kotlin.time.Duration
@@ -8,8 +8,8 @@ enum class KitchenSound { ALARM, BEEP }
 
 /**
  * Escolhe o som de um conjunto de sinais. O alarme de cancelamento tem prioridade e nunca é
- * suprimido; o bip de pedido novo respeita um intervalo mínimo, para uma rajada de pedidos no
- * pico virar poucos bips e não uma sirene.
+ * suprimido; o bip de pedido novo ou pronto respeita um intervalo mínimo, para uma rajada de
+ * pedidos no pico virar poucos bips e não uma sirene. Cada tela decide antes quais sinais recebe.
  */
 class KitchenSoundPolicy(private val minBeepInterval: Duration = DEFAULT_MIN_BEEP_INTERVAL) {
 
@@ -19,7 +19,7 @@ class KitchenSoundPolicy(private val minBeepInterval: Duration = DEFAULT_MIN_BEE
     fun soundFor(signals: Set<KitchenSignal>, now: Duration): KitchenSound? = when {
         KitchenSignal.CANCELLATION in signals -> KitchenSound.ALARM
 
-        KitchenSignal.NEW_ORDER in signals && canBeep(now) -> {
+        signals.any { it in BEEP_SIGNALS } && canBeep(now) -> {
             lastBeepAt = now
             KitchenSound.BEEP
         }
@@ -31,5 +31,7 @@ class KitchenSoundPolicy(private val minBeepInterval: Duration = DEFAULT_MIN_BEE
 
     companion object {
         val DEFAULT_MIN_BEEP_INTERVAL = 3.seconds
+
+        private val BEEP_SIGNALS = setOf(KitchenSignal.NEW_ORDER, KitchenSignal.ORDER_READY)
     }
 }

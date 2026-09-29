@@ -18,6 +18,11 @@ import io.github.gabrielevanger.kds.core.designsystem.component.ModifierKind
 import io.github.gabrielevanger.kds.core.designsystem.component.StageTone
 import io.github.gabrielevanger.kds.core.designsystem.theme.KdsTheme
 import io.github.gabrielevanger.kds.core.domain.model.OrderId
+import io.github.gabrielevanger.kds.core.ui.LocalNow
+import io.github.gabrielevanger.kds.core.ui.ModifierUi
+import io.github.gabrielevanger.kds.core.ui.OrderItemUi
+import io.github.gabrielevanger.kds.core.ui.OriginLabel
+import io.github.gabrielevanger.kds.core.ui.R as UiR
 import java.time.Instant
 import kotlinx.collections.immutable.persistentListOf
 import org.junit.Assert.assertEquals
@@ -76,7 +81,7 @@ class OrderCardTest {
         show(card)
 
         composeRule.onNodeWithText("#0007").assertIsDisplayed()
-        composeRule.onNodeWithText(context.getString(R.string.board_origin_table, 4)).assertIsDisplayed()
+        composeRule.onNodeWithText(context.getString(UiR.string.kitchen_origin_table, 4)).assertIsDisplayed()
     }
 
     @Test

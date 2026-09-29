@@ -28,6 +28,8 @@ data class KdsSizes(
     val actionButtonHeight: Dp = 72.dp,
     /** Largura de ações secundárias ao lado de um texto, como o "Desfazer" da barra inferior. */
     val secondaryActionWidth: Dp = 240.dp,
+    /** Abaixo desta largura (celular em pé, faixa compacta do Material) a ação vai para baixo do texto. */
+    val narrowLayoutMaxWidth: Dp = 600.dp,
 )
 
 @Immutable

@@ -1,4 +1,4 @@
-package io.github.gabrielevanger.kds.feature.board
+package io.github.gabrielevanger.kds.core.ui
 
 import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
@@ -32,19 +32,19 @@ class ConnectionBannerTest {
         composeRule.onNodeWithTag(ConnectionBannerTags.BANNER).assertDoesNotExist()
     }
 
-    /** Sem a faixa, o board vazio diria "Nenhum pedido" antes mesmo de os dados chegarem. */
+    /** Sem a faixa, a tela vazia diria "Nenhum pedido" antes mesmo de os dados chegarem. */
     @Test
     fun conectandoAvisaQueOsDadosAindaNaoChegaram() {
         show(ConnectionState.Connecting)
 
-        composeRule.onNodeWithText(context.getString(R.string.board_connection_connecting)).assertIsDisplayed()
+        composeRule.onNodeWithText(context.getString(R.string.kitchen_connection_connecting)).assertIsDisplayed()
     }
 
     @Test
     fun reconectandoMostraATentativaEAvisaQueOsPedidosPodemEstarDesatualizados() {
         show(ConnectionState.Reconnecting(attempt = 3))
 
-        composeRule.onNodeWithText(context.getString(R.string.board_connection_reconnecting, 3)).assertIsDisplayed()
-        composeRule.onNodeWithText(context.getString(R.string.board_connection_stale)).assertIsDisplayed()
+        composeRule.onNodeWithText(context.getString(R.string.kitchen_connection_reconnecting, 3)).assertIsDisplayed()
+        composeRule.onNodeWithText(context.getString(R.string.kitchen_connection_stale)).assertIsDisplayed()
     }
 }

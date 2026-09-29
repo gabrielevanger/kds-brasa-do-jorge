@@ -29,6 +29,9 @@ class KdsColorsContrastTest {
         "atrasado" to (colors.onLate to colors.late),
         "cancelado" to (colors.onCanceled to colors.canceled),
         "modificador no card" to (colors.modifierHighlight to colors.surface),
+        "cabeçalho da fila" to (colors.onQueuedContainer to colors.queuedContainer),
+        "cabeçalho do preparo" to (colors.onPreparingContainer to colors.preparingContainer),
+        "cabeçalho do pronto" to (colors.onReadyContainer to colors.readyContainer),
     )
 
     @ParameterizedTest(name = "{0}")

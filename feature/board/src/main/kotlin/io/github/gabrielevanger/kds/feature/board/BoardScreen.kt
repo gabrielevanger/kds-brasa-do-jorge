@@ -28,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.github.gabrielevanger.kds.core.designsystem.component.StageHeader
 import io.github.gabrielevanger.kds.core.designsystem.component.StageTone
 import io.github.gabrielevanger.kds.core.designsystem.component.visual
 import io.github.gabrielevanger.kds.core.designsystem.theme.KdsTheme
@@ -153,7 +154,7 @@ private fun BoardColumn(
         if (listState.firstVisibleItemIndex <= CARD_PUSHED_BY_INSERT) listState.scrollToItem(FIRST_CARD)
     }
     Column(modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(spacing.s)) {
-        ColumnHeader(tone = tone, count = orders.size)
+        StageHeader(tone = tone, title = tone.title(), count = orders.size)
         if (orders.isEmpty()) {
             Text(
                 text = stringResource(R.string.board_empty_column),
@@ -178,30 +179,6 @@ private fun BoardColumn(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun ColumnHeader(tone: StageTone, count: Int) {
-    val visual = tone.visual()
-    val spacing = KdsTheme.spacing
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(visual.color, KdsTheme.shapes.pill)
-            .padding(horizontal = spacing.m, vertical = spacing.xs),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(spacing.xs),
-    ) {
-        Icon(
-            painter = painterResource(visual.icon),
-            contentDescription = null,
-            tint = visual.onColor,
-            modifier = Modifier.size(KdsTheme.sizes.iconM),
-        )
-        Text(text = tone.title(), style = KdsTheme.typography.columnTitle, color = visual.onColor)
-        Box(modifier = Modifier.weight(EQUAL_SHARE))
-        Text(text = count.toString(), style = KdsTheme.typography.columnTitle, color = visual.onColor)
     }
 }
 

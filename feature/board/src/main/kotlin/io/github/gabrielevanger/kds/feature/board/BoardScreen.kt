@@ -55,6 +55,7 @@ object BoardTags {
 fun BoardRoute(viewModel: BoardViewModel = hiltViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val notice by rememberVisibleNotice(viewModel.notices)
+    KitchenSoundEffect(signals = viewModel.signals)
     KitchenClockProvider {
         BoardScreen(
             state = state,

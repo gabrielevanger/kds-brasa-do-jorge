@@ -28,8 +28,8 @@ class MainActivity : ComponentActivity() {
             val configuration = LocalConfiguration.current
             val isTelevision =
                 configuration.uiMode and Configuration.UI_MODE_TYPE_MASK == Configuration.UI_MODE_TYPE_TELEVISION
-            // A TV não tem ajuste de modo escuro para o dono escolher; o painel de parede fica sempre escuro.
-            val darkTheme = isTelevision || isSystemInDarkTheme()
+            // Todos os aparelhos seguem o modo do Android, que por padrão é claro.
+            val darkTheme = isSystemInDarkTheme()
             SystemBarsAppearance(window, darkTheme)
             KdsTheme(darkTheme = darkTheme) {
                 when (KitchenScreen.forDevice(configuration.smallestScreenWidthDp, isTelevision)) {

@@ -59,5 +59,4 @@ O desafio pede para contar como a IA foi usada: onde ajudou, onde errou e foi co
 - **TV sem alerta de cancelamento**, aceitando a recomendação e o motivo.
 - **Medir o release**, e não só o debug, o que corrigiu a conclusão sobre o pico.
 - **Tema claro.** Olhando o app como usuário, achei estranho ser todo escuro. A IA defendeu o escuro como padrão de cozinha e propôs oferecer os dois temas seguindo o Android; aprovei a direção depois de ver o card no tema claro, antes de qualquer código.
-- **Polimento visual sem Figma.** Perguntei se valia montar um Figma; a IA recomendou polir direto no Compose, cada item ligado a uma dor da cozinha e com teste (itens agrupados, faixa de atraso, barra superior, animação). Escolhi esse pacote.
-- **Forma de trabalhar:** passos pequenos, mensagem de commit revisada antes, Conventional Commits formais em português, PR com merge commit para preservar o histórico.
+- **Polimento visual sem Figma.** Perguntei se valia montar um Figma; a IA recomendou polir direto no Compose, cada item ligado a uma dor da cozinha e com teste (itens agrupados, faixa de atraso, barra superior, animação). Escolhi esse pacote.- **Forma de trabalhar:** passos pequenos, mensagem de commit revisada antes, Conventional Commits formais em português, PR com merge commit para preservar o histórico.

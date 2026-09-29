@@ -28,6 +28,8 @@ data class KdsSizes(
     val cardBorderWidth: Dp = 1.dp,
     /** Faixa lateral do card que marca atenção ou atraso, visível de longe. */
     val urgencyStripeWidth: Dp = 8.dp,
+    /** Linha na cor da etapa no topo do cabeçalho da coluna, que mantém a cor legível de longe. */
+    val stageAccentHeight: Dp = 4.dp,
     /** Ponto do indicador de conexão, sempre acompanhado de texto. */
     val statusDot: Dp = 14.dp,
     val minTouchTarget: Dp = 64.dp,

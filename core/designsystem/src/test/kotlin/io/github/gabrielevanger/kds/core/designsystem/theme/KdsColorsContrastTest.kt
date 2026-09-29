@@ -29,6 +29,9 @@ class KdsColorsContrastTest {
         "atrasado" to (colors.onLate to colors.late),
         "cancelado" to (colors.onCanceled to colors.canceled),
         "modificador no card" to (colors.modifierHighlight to colors.surface),
+        "cabeçalho da fila" to (colors.onQueuedContainer to colors.queuedContainer),
+        "cabeçalho do preparo" to (colors.onPreparingContainer to colors.preparingContainer),
+        "cabeçalho do pronto" to (colors.onReadyContainer to colors.readyContainer),
     )
 
     @ParameterizedTest(name = "{0}")
@@ -40,6 +43,15 @@ class KdsColorsContrastTest {
         }
 
         assertTrue(failures.isEmpty(), "Abaixo de 4,5:1 -> $failures")
+    }
+
+    /** Elementos gráficos, como ícones, pedem 3:1 (WCAG 2.1, critério 1.4.11). */
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("palettes")
+    fun `chama da marca se destaca do fundo`(colors: KdsColors) {
+        val ratio = contrastRatio(colors.brand, colors.background)
+
+        assertTrue(ratio >= NON_TEXT_MINIMUM, "Chama da marca: %.2f:1".format(ratio))
     }
 
     private fun contrastRatio(foreground: Color, background: Color): Double {
@@ -59,6 +71,7 @@ class KdsColorsContrastTest {
 
     companion object {
         private const val AA_NORMAL_TEXT = 4.5
+        private const val NON_TEXT_MINIMUM = 3.0
 
         @JvmStatic
         fun palettes(): Stream<Named<KdsColors>> = Stream.of(

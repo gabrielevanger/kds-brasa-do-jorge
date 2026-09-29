@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -16,7 +17,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import io.github.gabrielevanger.kds.core.designsystem.R as DesignR
 import io.github.gabrielevanger.kds.core.designsystem.theme.KdsTheme
 import io.github.gabrielevanger.kds.core.domain.sync.ConnectionState
 import java.time.ZoneId
@@ -45,15 +48,32 @@ fun KitchenTopBar(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(spacing.m),
     ) {
-        Text(
-            text = stringResource(R.string.kitchen_brand),
-            style = KdsTheme.typography.label,
-            color = KdsTheme.colors.onSurfaceMuted,
-        )
+        Brand()
         content()
         Box(modifier = Modifier.weight(EQUAL_SHARE))
         ConnectionStatus(connection)
         KitchenClockText(zone)
+    }
+}
+
+/** A chama do ícone do app ao lado do nome: a tela passa a ser da Brasa do Jorge, e não de um KDS genérico. */
+@Composable
+private fun Brand() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(KdsTheme.spacing.xs),
+    ) {
+        Icon(
+            painter = painterResource(DesignR.drawable.ic_brand_flame),
+            contentDescription = null,
+            tint = KdsTheme.colors.brand,
+            modifier = Modifier.size(KdsTheme.sizes.iconM),
+        )
+        Text(
+            text = stringResource(R.string.kitchen_brand),
+            style = KdsTheme.typography.origin,
+            color = KdsTheme.colors.onSurface,
+        )
     }
 }
 

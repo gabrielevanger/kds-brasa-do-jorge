@@ -7,11 +7,16 @@ import androidx.compose.ui.graphics.Color
 import io.github.gabrielevanger.kds.core.designsystem.R
 import io.github.gabrielevanger.kds.core.designsystem.theme.KdsTheme
 
-/** Cor, ícone e ação de cada etapa num lugar só, para colunas, badges e botões concordarem. */
+/**
+ * Cor, ícone e ação de cada etapa num lugar só, para colunas, badges e botões concordarem.
+ * [color] é a cor forte, dos botões; [container] é o fundo suave, dos cabeçalhos.
+ */
 @Immutable
 data class StageVisual(
     val color: Color,
     val onColor: Color,
+    val container: Color,
+    val onContainer: Color,
     @DrawableRes val icon: Int,
     @DrawableRes val actionIcon: Int,
 )
@@ -21,24 +26,30 @@ fun StageTone.visual(): StageVisual {
     val colors = KdsTheme.colors
     return when (this) {
         StageTone.QUEUED -> StageVisual(
-            colors.queued,
-            colors.onQueued,
-            R.drawable.ic_stage_queued,
-            R.drawable.ic_action_start,
+            color = colors.queued,
+            onColor = colors.onQueued,
+            container = colors.queuedContainer,
+            onContainer = colors.onQueuedContainer,
+            icon = R.drawable.ic_stage_queued,
+            actionIcon = R.drawable.ic_action_start,
         )
 
         StageTone.PREPARING -> StageVisual(
-            colors.preparing,
-            colors.onPreparing,
-            R.drawable.ic_stage_preparing,
-            R.drawable.ic_action_ready,
+            color = colors.preparing,
+            onColor = colors.onPreparing,
+            container = colors.preparingContainer,
+            onContainer = colors.onPreparingContainer,
+            icon = R.drawable.ic_stage_preparing,
+            actionIcon = R.drawable.ic_action_ready,
         )
 
         StageTone.READY -> StageVisual(
-            colors.ready,
-            colors.onReady,
-            R.drawable.ic_stage_ready,
-            R.drawable.ic_action_deliver,
+            color = colors.ready,
+            onColor = colors.onReady,
+            container = colors.readyContainer,
+            onContainer = colors.onReadyContainer,
+            icon = R.drawable.ic_stage_ready,
+            actionIcon = R.drawable.ic_action_deliver,
         )
     }
 }

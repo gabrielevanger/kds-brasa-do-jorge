@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="board_action_start">INICIAR</string>
-    <string name="board_action_ready">PRONTO</string>
-    <string name="board_action_deliver">ENTREGUE</string>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="pt-rBR">
+    <string name="board_action_start">Iniciar</string>
+    <string name="board_action_ready">Pronto</string>
+    <string name="board_action_deliver">Entregue</string>
 
-    <string name="board_filter_all">TODAS</string>
-    <string name="board_filter_chapa">CHAPA</string>
-    <string name="board_filter_fritadeira">FRITADEIRA</string>
-    <string name="board_filter_montagem">MONTAGEM</string>
+    <string name="board_filter_all">Todas</string>
+    <string name="board_filter_chapa">Chapa</string>
+    <string name="board_filter_fritadeira">Fritadeira</string>
+    <string name="board_filter_montagem">Montagem</string>
 
     <plurals name="board_item_count">
         <item quantity="one">%1$d item</item>
+        <item quantity="many">%1$d itens</item>
         <item quantity="other">%1$d itens</item>
     </plurals>
-    <string name="board_large_order">GRANDE</string>
+    <string name="board_large_order">Grande</string>
     <string name="board_item_quantity">%1$d×</string>
     <string name="board_empty_column">Nenhum pedido</string>
 </resources>

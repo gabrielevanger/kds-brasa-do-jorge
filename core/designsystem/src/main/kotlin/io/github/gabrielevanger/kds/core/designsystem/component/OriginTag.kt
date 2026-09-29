@@ -1,6 +1,6 @@
 package io.github.gabrielevanger.kds.core.designsystem.component
 
-import androidx.compose.foundation.border
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -20,7 +20,7 @@ fun OriginTag(kind: OriginKind, label: String, modifier: Modifier = Modifier) {
     val colors = KdsTheme.colors
     Row(
         modifier = modifier
-            .border(width = KdsTheme.sizes.borderWidth, color = colors.onSurfaceMuted, shape = KdsTheme.shapes.pill)
+            .background(colors.surfaceRaised, KdsTheme.shapes.pill)
             .padding(horizontal = KdsTheme.spacing.s, vertical = KdsTheme.spacing.xxs),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(KdsTheme.spacing.xs),

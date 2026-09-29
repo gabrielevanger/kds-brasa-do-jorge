@@ -16,20 +16,26 @@ Android nativo em Kotlin com Jetpack Compose. Um único APK assume o papel do ap
 
 <table>
   <tr>
-    <td><img src="docs/media/board-escuro.png" alt="Board no tablet, tema escuro: modificadores em destaque, origem do pedido, selo GRANDE e faixa vermelha no pedido atrasado"></td>
-    <td><img src="docs/media/board-claro-cancelamento.png" alt="Board no tablet, tema claro, com o alerta de um pedido pronto cancelado: NÃO ENTREGAR e o botão CIENTE"></td>
+    <td><img src="docs/media/board-claro.png" alt="Board no tablet, tema claro: a chama da marca, modificadores em destaque, origem do pedido, selo Grande e faixa vermelha no pedido atrasado"></td>
+    <td><img src="docs/media/board-escuro.png" alt="O mesmo board no tema escuro, com o fundo em grafite quente"></td>
   </tr>
   <tr>
-    <td align="center">Board no tablet, tema escuro</td>
-    <td align="center">Tema claro, com o alerta de cancelamento</td>
+    <td align="center">Board no tablet, tema claro (padrão do Android)</td>
+    <td align="center">O mesmo board no tema escuro</td>
   </tr>
   <tr>
-    <td><img src="docs/media/painel-tv.png" alt="Painel somente leitura na TV, com a fila, os pedidos atrasados e a barra superior com a conexão e a hora"></td>
-    <td align="center"><img src="docs/media/expedicao-celular.png" width="260" alt="Expedição no celular: pedidos prontos do mais antigo ao mais novo, COBRAR no pedido não pago e o botão ENTREGUE"></td>
+    <td><img src="docs/media/board-claro-cancelamento.png" alt="Alerta de um pedido pronto cancelado: CANCELADO, NÃO ENTREGAR e o botão Ciente"></td>
+    <td><img src="docs/media/painel-tv.png" alt="Painel somente leitura na TV, com a fila, pedidos em atenção com faixa âmbar e a barra superior com a conexão e a hora"></td>
   </tr>
   <tr>
+    <td align="center">Alerta de pedido pronto cancelado</td>
     <td align="center">Painel na TV, somente leitura</td>
-    <td align="center">Expedição no celular do garçom</td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><img src="docs/media/expedicao-celular.png" width="300" alt="Expedição no celular: pedidos prontos do mais antigo ao mais novo, COBRAR no pedido não pago e o botão Entregue"></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">Expedição no celular do garçom</td>
   </tr>
 </table>
 
@@ -43,7 +49,7 @@ Android nativo em Kotlin com Jetpack Compose. Um único APK assume o papel do ap
 - **Cancelamento de pedido em andamento** vira alerta com alarme até alguém tocar em CIENTE, inclusive o que acontecer durante uma queda de rede.
 - **Filtro por estação** (Chapa, Fritadeira, Montagem).
 - **Expedição no celular:** bip e vibração quando um pedido fica pronto, COBRAR para pedido não pago e tempo no balcão.
-- **Tema claro e escuro**, seguindo o modo do Android; a TV fica sempre escura.
+- **Tema claro e escuro**, seguindo o modo do Android, que por padrão é claro, em todos os aparelhos.
 
 ## Como rodar
 

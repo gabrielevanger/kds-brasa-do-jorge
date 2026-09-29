@@ -23,6 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.github.gabrielevanger.kds.core.designsystem.component.StageHeader
 import io.github.gabrielevanger.kds.core.designsystem.component.StageTone
 import io.github.gabrielevanger.kds.core.designsystem.component.visual
 import io.github.gabrielevanger.kds.core.designsystem.theme.KdsTheme
@@ -77,7 +78,11 @@ fun ExpeditionScreen(
             .padding(spacing.s),
         verticalArrangement = Arrangement.spacedBy(spacing.s),
     ) {
-        ExpeditionHeader(count = state.orders.size)
+        StageHeader(
+            tone = StageTone.READY,
+            title = stringResource(R.string.expedition_title),
+            count = state.orders.size,
+        )
         ConnectionBanner(connection = state.connection)
         CancellationAlerts(alerts = state.cancellationAlerts, onDismiss = onDismissAlert)
         Box(modifier = Modifier.weight(EQUAL_SHARE)) {
@@ -105,33 +110,5 @@ fun ExpeditionScreen(
             }
         }
         FeedbackBar(notice = notice, undo = state.undo, onUndo = onUndo)
-    }
-}
-
-@Composable
-private fun ExpeditionHeader(count: Int) {
-    val visual = StageTone.READY.visual()
-    val spacing = KdsTheme.spacing
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(visual.color, KdsTheme.shapes.pill)
-            .padding(horizontal = spacing.m, vertical = spacing.xs),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(spacing.xs),
-    ) {
-        Icon(
-            painter = painterResource(visual.icon),
-            contentDescription = null,
-            tint = visual.onColor,
-            modifier = Modifier.size(KdsTheme.sizes.iconM),
-        )
-        Text(
-            text = stringResource(R.string.expedition_title),
-            style = KdsTheme.typography.columnTitle,
-            color = visual.onColor,
-            modifier = Modifier.weight(EQUAL_SHARE),
-        )
-        Text(text = count.toString(), style = KdsTheme.typography.columnTitle, color = visual.onColor)
     }
 }

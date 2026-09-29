@@ -20,30 +20,30 @@ Peso definido por quanto a dor custa (cliente perdido, retrabalho, prejuízo) e 
 
 | # | Requisito | Dor | Onde |
 |---|---|---|---|
-| 1 | Pedido novo aparece sozinho, em tempo real | Comanda perdida | a definir |
-| 2 | Fila por ordem de chegada, em colunas Na fila, Preparando, Pronto | Qual fazer primeiro | a definir |
-| 3 | Tempo de espera visível, com faixas normal, atenção e atrasado | Qual fazer primeiro | a definir |
-| 4 | Avançar etapa com um toque, sem confirmação, com Desfazer por ~5 s | Não pode clicar | a definir |
-| 5 | Modificadores e observações em destaque abaixo do item | Modificadores | a definir |
-| 6 | Origem forte: MESA 4, BALCÃO, iFood, WhatsApp, Pigz | Delivery vs salão | a definir |
-| 7 | Quantidade de itens em destaque no card | Coca vs combos | a definir |
-| 8 | Cancelamento de pedido em andamento vira alerta com som até alguém dispensar | Cliente desiste | a definir |
-| 9 | Tela de Expedição no celular: prontos e ação Entregue | Garçom não sabe | a definir |
-| 10 | Filtro por estação (Chapa, Fritadeira, Montagem) | Sincronização (parcial) | a definir |
-| 11 | Painel para TV, somente leitura (opcional) | Qual fazer primeiro | a definir |
+| 1 | Pedido novo aparece sozinho, em tempo real | Comanda perdida | SSE em `core/data` (`SseOrderConnection`, `ReconnectingOrderStream`) alimentando o `OrderStore`; bip pelo `KitchenSignals`. Testes: `SseOrderConnectionTest`, `OrderStoreTest`, `KitchenSignalsTest` |
+| 2 | Fila por ordem de chegada, em colunas Na fila, Preparando, Pronto | Qual fazer primeiro | `KitchenState.ordersByArrival`, `BoardUiMapper`, `BoardScreen`. Testes: `BoardUiMapperTest`, `BoardColumnScrollTest` (o pedido mais antigo nunca fica escondido acima do topo) |
+| 3 | Tempo de espera visível, com faixas normal, atenção e atrasado | Qual fazer primeiro | `WaitPolicy` no domínio, `WaitTimer` no design system, um relógio único (`KitchenClock`). Testes: `WaitPolicyTest`, `WaitTimerFormatTest`, `OrderCardTest` |
+| 4 | Avançar etapa com um toque, sem confirmação, com Desfazer por ~5 s | Não pode clicar | Envio adiado no `OrderStore`, transição otimista no `OrderReducer`, barra no `FeedbackBar` (inclusive no ENTREGUE). Testes: `OptimisticTransitionTest`, `OrderStoreTest`, `FeedbackBarTest`, `KitchenUiMapperTest` |
+| 5 | Modificadores e observações em destaque abaixo do item | Modificadores | `KitchenUiMapper.toItem` (grupo do servidor vira remover, adicionar ou outro), `ModifierLine`, `OrderCard`. Testes: `KitchenUiMapperTest`, `OrderCardTest` |
+| 6 | Origem forte: MESA 4, BALCÃO, iFood, WhatsApp, Pigz | Delivery vs salão | `KitchenUiMapper.originLabel`, `OriginTag`, textos em `core/ui`. Testes: `KitchenUiMapperTest`, `OrderCardTest` |
+| 7 | Quantidade de itens em destaque no card | Coca vs combos | `Order.itemCount` e `Order.isLarge`, selo GRANDE no `OrderCard`. Testes: `OrderTest`, `OrderCardTest` |
+| 8 | Cancelamento de pedido em andamento vira alerta com som até alguém dispensar | Cliente desiste | Alerta no `OrderReducer` (inclusive na reconexão), `CancellationAlerts` com CIENTE, alarme pelo `KitchenSignals` e `KitchenSoundEffect`. Testes: `OrderReducerTest`, `ReconnectionTest`, `CancellationAlertsTest`, `KitchenSignalsTest`, `KitchenSoundPolicyTest` |
+| 9 | Tela de Expedição no celular: prontos e ação Entregue | Garçom não sabe | `feature/expedition` (COBRAR, tempo no balcão, ENTREGUE com desfazer, bip e vibração no pronto). Testes: `ExpeditionUiMapperTest`, `ReadyOrderCardTest`, `ExpeditionScreenTest` |
+| 10 | Filtro por estação (Chapa, Fritadeira, Montagem) | Sincronização (parcial) | `StationFilter` no `BoardUiMapper`. Teste: `BoardUiMapperTest` (filtro por estação) |
+| 11 | Painel para TV, somente leitura (opcional) | Qual fazer primeiro | `TvPanelScreen`, escolhido pela `KitchenScreen` quando o aparelho é TV. Testes: `TvPanelScreenTest`, `KitchenScreenTest` |
 
 ## Requisitos não funcionais
 
 | Requisito | Onde |
 |---|---|
-| Reconexão automática com backoff quando a rede cai | a definir |
-| Evento repetido ou fora de ordem não duplica nem regride o pedido | a definir |
-| Fluido no pico: centenas de pedidos ativos e evento a cada 300 ms | a definir |
-| Sem tela branca nem erro cru: mantém o último estado com aviso "Reconectando" | a definir |
-| Ciclo de vida modelado numa máquina de estados, transição inválida rejeitada | a definir |
-| Alvos de toque grandes, legível a distância, estado com cor, ícone e texto | a definir |
-| Layout por contexto: tablet horizontal, celular e TV | a definir |
-| Testes nas transições, no evento duplicado e num componente central | a definir |
+| Reconexão automática com backoff quando a rede cai | `ReconnectingOrderStream` com `BackoffPolicy` (1 a 30 s, com jitter) e `NetworkMonitor`; heartbeat `: ping` no mock. Testes: `ReconnectingOrderStreamTest`, `BackoffPolicyTest` |
+| Evento repetido ou fora de ordem não duplica nem regride o pedido | `version` no mock e `OrderReducer` que só aplica versão maior. Testes: `OrderReducerTest` (evento duplicado, fora de ordem, eco do PATCH), `ReconnectionTest` |
+| Fluido no pico: centenas de pedidos ativos e evento a cada 300 ms | `LazyColumn` com key e contentType (`BoardScreen`), mapeamento fora da thread principal (`BoardViewModel`), relógio único que recompõe só o timer (`KitchenClock`), coleções imutáveis. Sem teste de carga automatizado |
+| Sem tela branca nem erro cru: mantém o último estado com aviso "Reconectando" | O `OrderStore` mantém o estado durante a queda; `ConnectionBanner` avisa. Testes: `ConnectionBannerTest`, `ReconnectionTest` |
+| Ciclo de vida modelado numa máquina de estados, transição inválida rejeitada | `StageMachine` no app; tabela de transições e 409 no mock; `RemoteOrderCommands` traduz o 409. Testes: `StageMachineTest`, `RemoteOrderCommandsTest`, `OptimisticTransitionTest` |
+| Alvos de toque grandes, legível a distância, estado com cor, ícone e texto | Tokens do `core/designsystem` (toque mínimo de 64 dp, botão de 72 dp, tipografia para 2 m), `WaitTimer` e `StageVisuals` com cor, ícone e texto. Testes: `KdsColorsContrastTest`, `OrderCardTest` |
+| Layout por contexto: tablet horizontal, celular e TV | `KitchenScreen` e `MainActivity` escolhem a tela; `MessageWithAction` empilha a ação no celular. Testes: `KitchenScreenTest`, `CancellationAlertsTest` e `FeedbackBarTest` (posição do botão no celular e no tablet) |
+| Testes nas transições, no evento duplicado e num componente central | `StageMachineTest`, `OrderReducerTest` e `OrderCardTest`, com teste de mutação manual em cada regra de negócio |
 | Uso de IA documentado | `docs/AI_USAGE.md` |
 
 ## Premissas
@@ -58,7 +58,7 @@ Peso definido por quanto a dor custa (cliente perdido, retrabalho, prejuízo) e 
 - A Expedição só mostra cancelamentos de pedidos que já estavam prontos ("NÃO ENTREGAR"); cancelamento em preparo é assunto da cozinha.
 - Um tablet na montagem com a visão geral; "pronto" é marcado no pedido inteiro.
 - Um pedido ativo que deixa de vir no snapshot após uma reconexão saiu do servidor por motivo desconhecido e é removido da tela sem alerta. O mock sempre envia todos os pedidos; a regra protege contra um back que omita os finalizados.
-- Os números do cenário não fecham (60% de 3.200 pedidos dá ~63 por hora no pico; o texto diz até 14 em 20 min, ~42 por hora). O teste de carga usa o maior, com margem.
+- Os números do cenário não fecham (60% de 3.200 pedidos dá ~63 por hora no pico; o texto diz até 14 em 20 min, ~42 por hora). A lista foi pensada para o maior, com margem.
 
 ## Fora de escopo (v2)
 

@@ -44,9 +44,10 @@ private val waitPolicy = WaitPolicy()
 /**
  * Card do pedido, na ordem em que a cozinha lê de longe: quem é e para onde vai, há quanto tempo
  * espera, o tamanho, os itens com os modificadores em destaque e, por último, a ação.
+ * Sem [onAdvance] (painel de TV, somente leitura), o card não tem botão.
  */
 @Composable
-fun OrderCard(card: OrderCardUi, onAdvance: () -> Unit, modifier: Modifier = Modifier) {
+fun OrderCard(card: OrderCardUi, onAdvance: (() -> Unit)?, modifier: Modifier = Modifier) {
     val spacing = KdsTheme.spacing
     val visual = card.tone.visual()
     Surface(
@@ -77,15 +78,17 @@ fun OrderCard(card: OrderCardUi, onAdvance: () -> Unit, modifier: Modifier = Mod
             HorizontalDivider(color = KdsTheme.colors.outline)
             card.items.forEach { item -> OrderItemRow(item) }
             card.note?.let { note -> ModifierLine(kind = ModifierKind.OTHER, text = note) }
-            KitchenActionButton(
-                icon = visual.actionIcon,
-                text = card.tone.actionText(),
-                containerColor = visual.color,
-                contentColor = visual.onColor,
-                onClick = onAdvance,
-                enabled = !card.isAwaitingServer,
-                modifier = Modifier.testTag(OrderCardTags.ACTION),
-            )
+            if (onAdvance != null) {
+                KitchenActionButton(
+                    icon = visual.actionIcon,
+                    text = card.tone.actionText(),
+                    containerColor = visual.color,
+                    contentColor = visual.onColor,
+                    onClick = onAdvance,
+                    enabled = !card.isAwaitingServer,
+                    modifier = Modifier.testTag(OrderCardTags.ACTION),
+                )
+            }
         }
     }
 }

@@ -91,17 +91,27 @@ fun BoardScreen(
         ConnectionBanner(connection = state.connection)
         CancellationAlerts(alerts = state.cancellationAlerts, onDismiss = onDismissAlert)
         StationFilterRow(selected = state.stationFilter, onSelected = onStationFilterSelected)
-        Row(modifier = Modifier.weight(EQUAL_SHARE), horizontalArrangement = Arrangement.spacedBy(spacing.s)) {
-            state.columns.forEach { column ->
-                BoardColumn(
-                    tone = column.tone,
-                    orders = column.orders,
-                    onAdvance = onAdvance,
-                    modifier = Modifier.weight(EQUAL_SHARE),
-                )
-            }
-        }
+        BoardColumns(columns = state.columns, onAdvance = onAdvance, modifier = Modifier.weight(EQUAL_SHARE))
         FeedbackBar(notice = notice, undo = state.undo, onUndo = onUndo)
+    }
+}
+
+/** As três colunas da linha de produção. Sem [onAdvance], os cards não têm botão (painel de TV). */
+@Composable
+internal fun BoardColumns(
+    columns: ImmutableList<BoardColumnUi>,
+    onAdvance: ((OrderId) -> Unit)?,
+    modifier: Modifier = Modifier,
+) {
+    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(KdsTheme.spacing.s)) {
+        columns.forEach { column ->
+            BoardColumn(
+                tone = column.tone,
+                orders = column.orders,
+                onAdvance = onAdvance,
+                modifier = Modifier.weight(EQUAL_SHARE),
+            )
+        }
     }
 }
 
@@ -128,7 +138,7 @@ private fun StationFilterRow(selected: StationFilter, onSelected: (StationFilter
 private fun BoardColumn(
     tone: StageTone,
     orders: ImmutableList<OrderCardUi>,
-    onAdvance: (OrderId) -> Unit,
+    onAdvance: ((OrderId) -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     val spacing = KdsTheme.spacing
@@ -156,7 +166,7 @@ private fun BoardColumn(
                 modifier = Modifier.testTag(BoardTags.column(tone)),
             ) {
                 items(items = orders, key = { it.id.value }, contentType = { ORDER_CARD_CONTENT_TYPE }) { card ->
-                    OrderCard(card = card, onAdvance = { onAdvance(card.id) })
+                    OrderCard(card = card, onAdvance = onAdvance?.let { advance -> { advance(card.id) } })
                 }
             }
         }

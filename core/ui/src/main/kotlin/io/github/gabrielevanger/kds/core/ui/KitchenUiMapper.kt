@@ -85,8 +85,7 @@ object KitchenUiMapper {
     fun latestUndoable(state: KitchenState): UndoUi? {
         val (orderId, pending) = state.pending.entries.lastOrNull { it.value.canUndo } ?: return null
         val order = state.orders[orderId] ?: return null
-        val targetTone = toneOf(pending.to) ?: return null
-        return UndoUi(orderId, order.reference, targetTone)
+        return UndoUi(orderId, order.reference, targetTone = toneOf(pending.to))
     }
 
     /** Etapa como a cozinha a enxerga; pedido encerrado não aparece em nenhuma tela. */

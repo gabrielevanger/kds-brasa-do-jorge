@@ -80,6 +80,16 @@ class KitchenUiMapperTest {
         assertEquals(listOf("Smash Bacon" to 3, "Milkshake Ovomaltine" to 1), items.map { it.name to it.quantity })
     }
 
+    @Test
+    fun `entrega tambem oferece desfazer`() {
+        val state = stateOf(
+            anOrder(id = 8, stage = Stage.READY, version = 3),
+            events = listOf(KitchenEvent.TransitionRequested(OrderId(8))),
+        )
+
+        assertEquals(UndoUi(OrderId(8), "#0008", targetTone = null), KitchenUiMapper.latestUndoable(state))
+    }
+
     @Nested
     inner class `Avisos de envio` {
 

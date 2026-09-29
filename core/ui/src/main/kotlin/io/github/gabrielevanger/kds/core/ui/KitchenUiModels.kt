@@ -32,9 +32,9 @@ data class CancellationAlertUi(
     val items: ImmutableList<OrderItemUi>,
 )
 
-/** Toque mais recente que ainda pode ser desfeito. */
+/** Toque mais recente que ainda pode ser desfeito. [targetTone] nulo: o pedido foi entregue e saiu da tela. */
 @Immutable
-data class UndoUi(val orderId: OrderId, val reference: String, val targetTone: StageTone)
+data class UndoUi(val orderId: OrderId, val reference: String, val targetTone: StageTone?)
 
 /** Aviso pontual sobre um toque que não chegou ao servidor, com a etapa em que o card ficou. */
 @Immutable

@@ -50,7 +50,9 @@ private fun UndoBar(undo: UndoUi, onUndo: () -> Unit, modifier: Modifier) {
             .testTag(FeedbackBarTags.UNDO),
         message = {
             Text(
-                text = stringResource(R.string.kitchen_undo_message, undo.reference, undo.targetTone.title()),
+                text = undo.targetTone
+                    ?.let { stringResource(R.string.kitchen_undo_message, undo.reference, it.title()) }
+                    ?: stringResource(R.string.kitchen_undo_delivered, undo.reference),
                 style = KdsTheme.typography.itemName,
                 color = colors.onSurface,
                 modifier = Modifier.weight(EQUAL_SHARE),

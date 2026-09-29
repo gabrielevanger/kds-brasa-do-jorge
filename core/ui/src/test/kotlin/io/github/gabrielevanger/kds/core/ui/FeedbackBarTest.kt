@@ -51,6 +51,14 @@ class FeedbackBarTest {
     }
 
     @Test
+    fun entregaMostraQueOPedidoFoiEntregue() {
+        show(notice = null, undo = UndoUi(OrderId(8), "#0008", targetTone = null))
+
+        composeRule.onNodeWithText(context.getString(R.string.kitchen_undo_delivered, "#0008")).assertIsDisplayed()
+        composeRule.onNodeWithText(context.getString(R.string.kitchen_undo_action)).assertIsDisplayed()
+    }
+
+    @Test
     fun tocarEmDesfazerDesfazOToqueDaquelePedido() {
         val undone = mutableListOf<UndoUi>()
         show(notice = null, undo = undo, onUndo = { undone += it })

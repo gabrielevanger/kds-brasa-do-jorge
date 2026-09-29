@@ -16,7 +16,6 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                     checkDependencies = true
                     warningsAsErrors = true
                     abortOnError = true
-                    sarifReport = true
                     // Estas checagens consultam versões novas na internet: o resultado mudaria
                     // sem nenhuma alteração no código. Atualizar dependências é tarefa à parte.
                     disable += setOf("GradleDependency", "NewerVersionAvailable", "AndroidGradlePluginVersion")

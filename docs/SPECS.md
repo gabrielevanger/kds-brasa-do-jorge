@@ -54,6 +54,8 @@ Peso definido por quanto a dor custa (cliente perdido, retrabalho, prejuízo) e 
 - Faixas de atraso: até 8 min normal, 8 a 15 min atenção, acima de 15 min atrasado. Confirmadas com o cliente e configuráveis.
 - Pedido com 5 itens ou mais, somando as quantidades, é destacado como grande.
 - Pedido não pago (`NO_PAID`) mostra "COBRAR" na Expedição, para o garçom não entregar sem receber. Confirmado com o cliente.
+- Na Expedição, o tempo no balcão conta desde a última alteração do pedido pronto (`updated`): o servidor não registra quando ele ficou pronto, e o pedido pronto só muda de novo ao sair do balcão.
+- A Expedição só mostra cancelamentos de pedidos que já estavam prontos ("NÃO ENTREGAR"); cancelamento em preparo é assunto da cozinha.
 - Um tablet na montagem com a visão geral; "pronto" é marcado no pedido inteiro.
 - Um pedido ativo que deixa de vir no snapshot após uma reconexão saiu do servidor por motivo desconhecido e é removido da tela sem alerta. O mock sempre envia todos os pedidos; a regra protege contra um back que omita os finalizados.
 - Os números do cenário não fecham (60% de 3.200 pedidos dá ~63 por hora no pico; o texto diz até 14 em 20 min, ~42 por hora). O teste de carga usa o maior, com margem.

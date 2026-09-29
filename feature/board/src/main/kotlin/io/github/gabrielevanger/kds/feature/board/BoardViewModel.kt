@@ -7,6 +7,8 @@ import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenSignal
 import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenSignals
 import io.github.gabrielevanger.kds.core.domain.kitchen.OrderStore
 import io.github.gabrielevanger.kds.core.domain.model.OrderId
+import io.github.gabrielevanger.kds.core.ui.KitchenNotice
+import io.github.gabrielevanger.kds.core.ui.KitchenUiMapper
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -30,7 +32,7 @@ class BoardViewModel @Inject constructor(private val store: OrderStore) : ViewMo
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_SHARING_AFTER_MILLIS), BoardUiState.Initial)
 
     /** Avisos pontuais já com o número do pedido e a etapa em que o card ficou. */
-    val notices: Flow<BoardNotice> = store.notices.mapNotNull { BoardUiMapper.mapNotice(it, store.state.value) }
+    val notices: Flow<KitchenNotice> = store.notices.mapNotNull { KitchenUiMapper.mapNotice(it, store.state.value) }
 
     /**
      * Sinais sonoros entre estados consecutivos. A comparação parte do estado já exibido quando a

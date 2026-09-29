@@ -20,29 +20,29 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import io.github.gabrielevanger.kds.core.designsystem.component.StageTone
 import io.github.gabrielevanger.kds.core.designsystem.component.visual
 import io.github.gabrielevanger.kds.core.designsystem.theme.KdsTheme
 import io.github.gabrielevanger.kds.core.domain.model.OrderId
-import kotlin.time.Duration.Companion.seconds
+import io.github.gabrielevanger.kds.core.ui.CancellationAlerts
+import io.github.gabrielevanger.kds.core.ui.ConnectionBanner
+import io.github.gabrielevanger.kds.core.ui.EQUAL_SHARE
+import io.github.gabrielevanger.kds.core.ui.FeedbackBar
+import io.github.gabrielevanger.kds.core.ui.KitchenClockProvider
+import io.github.gabrielevanger.kds.core.ui.KitchenNotice
+import io.github.gabrielevanger.kds.core.ui.KitchenSoundEffect
+import io.github.gabrielevanger.kds.core.ui.UndoUi
+import io.github.gabrielevanger.kds.core.ui.rememberVisibleNotice
+import io.github.gabrielevanger.kds.core.ui.title
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
 
 /** Tags usadas pelos testes de interface para localizar as listas de cada coluna. */
 object BoardTags {
@@ -68,28 +68,11 @@ fun BoardRoute(viewModel: BoardViewModel = hiltViewModel()) {
     }
 }
 
-/** Mantém cada aviso visível por alguns segundos; um aviso novo substitui o anterior. */
-@Composable
-private fun rememberVisibleNotice(notices: Flow<BoardNotice>): State<BoardNotice?> {
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val visible = remember { mutableStateOf<BoardNotice?>(null) }
-    LaunchedEffect(notices, lifecycleOwner) {
-        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            notices.collectLatest { notice ->
-                visible.value = notice
-                delay(NOTICE_DURATION)
-                visible.value = null
-            }
-        }
-    }
-    return visible
-}
-
 /** Board do tablet na horizontal: uma coluna por etapa, na ordem da linha de produção. */
 @Composable
 fun BoardScreen(
     state: BoardUiState,
-    notice: BoardNotice?,
+    notice: KitchenNotice?,
     onAdvance: (OrderId) -> Unit,
     onUndo: (UndoUi) -> Unit,
     onDismissAlert: (OrderId) -> Unit,
@@ -198,7 +181,7 @@ private fun ColumnHeader(tone: StageTone, count: Int) {
             tint = visual.onColor,
             modifier = Modifier.size(KdsTheme.sizes.iconM),
         )
-        Text(text = tone.columnTitle(), style = KdsTheme.typography.columnTitle, color = visual.onColor)
+        Text(text = tone.title(), style = KdsTheme.typography.columnTitle, color = visual.onColor)
         Box(modifier = Modifier.weight(EQUAL_SHARE))
         Text(text = count.toString(), style = KdsTheme.typography.columnTitle, color = visual.onColor)
     }
@@ -210,6 +193,3 @@ private const val FIRST_CARD = 0
 
 /** Posição em que o card do topo fica depois que um pedido mais antigo entra acima dele. */
 private const val CARD_PUSHED_BY_INSERT = 1
-
-/** Tempo de leitura do aviso de falha, igual à janela de desfazer para manter um ritmo único. */
-private val NOTICE_DURATION = 5.seconds

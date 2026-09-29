@@ -26,6 +26,10 @@ import io.github.gabrielevanger.kds.core.designsystem.component.visual
 import io.github.gabrielevanger.kds.core.designsystem.theme.KdsTheme
 import io.github.gabrielevanger.kds.core.domain.kitchen.WaitBand
 import io.github.gabrielevanger.kds.core.domain.kitchen.WaitPolicy
+import io.github.gabrielevanger.kds.core.ui.LocalNow
+import io.github.gabrielevanger.kds.core.ui.OrderItemUi
+import io.github.gabrielevanger.kds.core.ui.iconKind
+import io.github.gabrielevanger.kds.core.ui.text
 import java.time.Instant
 
 /** Tags usadas pelos testes de interface para localizar partes do card. */

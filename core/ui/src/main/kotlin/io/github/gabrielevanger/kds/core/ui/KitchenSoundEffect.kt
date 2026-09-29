@@ -1,4 +1,4 @@
-package io.github.gabrielevanger.kds.feature.board
+package io.github.gabrielevanger.kds.core.ui
 
 import android.media.AudioManager
 import android.media.ToneGenerator
@@ -16,7 +16,7 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Toca os sinais da cozinha enquanto o board está visível. Usa o canal de alarme, cujo volume
+ * Toca os sinais da cozinha enquanto a tela está visível. Usa o canal de alarme, cujo volume
  * costuma ficar alto e não é silenciado pelo modo de notificações.
  */
 @Composable
@@ -40,11 +40,11 @@ fun KitchenSoundEffect(signals: Flow<Set<KitchenSignal>>) {
     }
 }
 
-/** Sem áudio disponível o board segue funcionando, só que em silêncio: melhor mudo do que fechado. */
+/** Sem áudio disponível a tela segue funcionando, só que em silêncio: melhor mudo do que fechado. */
 private fun createToneGenerator(): ToneGenerator? = try {
     ToneGenerator(AudioManager.STREAM_ALARM, ToneGenerator.MAX_VOLUME)
 } catch (e: RuntimeException) {
-    Log.w(LOG_TAG, "Áudio indisponível: o board seguirá sem avisos sonoros", e)
+    Log.w(LOG_TAG, "Áudio indisponível: a tela seguirá sem avisos sonoros", e)
     null
 }
 

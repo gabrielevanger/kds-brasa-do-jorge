@@ -1,12 +1,9 @@
 package io.github.gabrielevanger.kds.feature.board
 
-import io.github.gabrielevanger.kds.core.designsystem.component.ModifierKind
 import io.github.gabrielevanger.kds.core.designsystem.component.StageTone
 import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenEvent
 import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenState
 import io.github.gabrielevanger.kds.core.domain.kitchen.OrderReducer
-import io.github.gabrielevanger.kds.core.domain.kitchen.StoreNotice
-import io.github.gabrielevanger.kds.core.domain.model.Modifier
 import io.github.gabrielevanger.kds.core.domain.model.Order
 import io.github.gabrielevanger.kds.core.domain.model.OrderId
 import io.github.gabrielevanger.kds.core.domain.model.Origin
@@ -16,13 +13,12 @@ import io.github.gabrielevanger.kds.core.domain.sync.ConnectionState
 import io.github.gabrielevanger.kds.core.domain.testing.BASE_TIME
 import io.github.gabrielevanger.kds.core.domain.testing.anItem
 import io.github.gabrielevanger.kds.core.domain.testing.anOrder
+import io.github.gabrielevanger.kds.core.ui.UndoUi
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.CsvSource
 
 class BoardUiMapperTest {
 
@@ -109,95 +105,6 @@ class BoardUiMapperTest {
             val card = map(stateOf(combo)).column(StageTone.QUEUED).single()
 
             assertEquals(2, card.items.size)
-        }
-    }
-
-    @ParameterizedTest(name = "{0} com mesa {1} -> {2}")
-    @CsvSource(
-        "POS, 4, TABLE",
-        "POS, , COUNTER",
-        "WHATSAPP_AI, , WHATSAPP",
-        "IFOOD, , IFOOD",
-        "MARKETPLACE, , PIGZ",
-        "CARDAPIO_WEB, , WEB_MENU",
-        "CLIENTE_FIEL, , LOYALTY",
-        "OTHER, , OTHER",
-    )
-    fun `origem vira o rotulo da etiqueta`(origin: Origin, table: Int?, expected: OriginLabel) {
-        val card = map(stateOf(anOrder(id = 1, origin = origin, table = table))).column(StageTone.QUEUED).single()
-
-        assertEquals(expected, card.origin)
-        assertEquals(table, card.tableNumber)
-    }
-
-    @Test
-    fun `modificadores sao classificados pelo grupo enviado pelo servidor`() {
-        val item = anItem(
-            modifiers = listOf(
-                Modifier(group = "Remover", option = "Sem cebola"),
-                Modifier(group = "Adicionais", option = "Cheddar extra"),
-                Modifier(group = "Ponto da carne", option = "Mal passado"),
-            ),
-        )
-
-        val modifiers = map(
-            stateOf(anOrder(id = 1, items = listOf(item))),
-        ).column(StageTone.QUEUED).single().items.single().modifiers
-
-        assertEquals(
-            listOf(
-                ModifierUi(ModifierKind.REMOVE, "Sem cebola"),
-                ModifierUi(ModifierKind.ADD, "Cheddar extra"),
-                ModifierUi(ModifierKind.OTHER, "Mal passado"),
-            ),
-            modifiers,
-        )
-    }
-
-    @Test
-    fun `alerta agrupa itens iguais que o servidor envia em linhas separadas`() {
-        val order = anOrder(
-            id = 1,
-            stage = Stage.PREPARING,
-            version = 2,
-            items = listOf(
-                anItem(name = "Smash Bacon", quantity = 1),
-                anItem(name = "Milkshake Ovomaltine", quantity = 1),
-                anItem(name = "Smash Bacon", quantity = 2),
-            ),
-        )
-        val state =
-            stateOf(order, events = listOf(KitchenEvent.OrderReceived(order.copy(stage = Stage.CANCELED, version = 3))))
-
-        val items = map(state).cancellationAlerts.single().items
-
-        assertEquals(listOf("Smash Bacon" to 3, "Milkshake Ovomaltine" to 1), items.map { it.name to it.quantity })
-    }
-
-    @Nested
-    inner class `Avisos de envio` {
-
-        @Test
-        fun `falha de envio informa o pedido e a etapa para onde o card voltou`() {
-            val state = stateOf(anOrder(id = 5, stage = Stage.PENDING))
-
-            val notice = BoardUiMapper.mapNotice(StoreNotice.TransitionNotSent(OrderId(5)), state)
-
-            assertEquals(BoardNotice(BoardNotice.Kind.NOT_SENT, "#0005", StageTone.QUEUED), notice)
-        }
-
-        @Test
-        fun `rejeicao informa a etapa real do pedido no servidor`() {
-            val state = stateOf(anOrder(id = 5, stage = Stage.READY, version = 3))
-
-            val notice = BoardUiMapper.mapNotice(StoreNotice.TransitionRejected(OrderId(5)), state)
-
-            assertEquals(BoardNotice(BoardNotice.Kind.REJECTED, "#0005", StageTone.READY), notice)
-        }
-
-        @Test
-        fun `pedido que ja saiu da tela nao gera aviso`() {
-            assertNull(BoardUiMapper.mapNotice(StoreNotice.TransitionNotSent(OrderId(99)), KitchenState()))
         }
     }
 

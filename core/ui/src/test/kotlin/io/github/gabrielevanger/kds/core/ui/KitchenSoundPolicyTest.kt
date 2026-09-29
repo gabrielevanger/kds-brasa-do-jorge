@@ -1,4 +1,4 @@
-package io.github.gabrielevanger.kds.feature.board
+package io.github.gabrielevanger.kds.core.ui
 
 import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenSignal
 import kotlin.time.Duration.Companion.milliseconds

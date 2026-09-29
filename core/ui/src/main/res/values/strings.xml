@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="kitchen_stage_queued">NA FILA</string>
+    <string name="kitchen_stage_preparing">PREPARANDO</string>
+    <string name="kitchen_stage_ready">PRONTO</string>
+
+    <string name="kitchen_origin_table">MESA %1$d</string>
+    <string name="kitchen_origin_counter">BALCÃO</string>
+    <string name="kitchen_origin_whatsapp">WHATSAPP</string>
+    <string name="kitchen_origin_ifood">iFOOD</string>
+    <string name="kitchen_origin_pigz">PIGZ</string>
+    <string name="kitchen_origin_web_menu">CARDÁPIO WEB</string>
+    <string name="kitchen_origin_loyalty">CLIENTE FIEL</string>
+    <string name="kitchen_origin_other">OUTRO CANAL</string>
+
+    <string name="kitchen_item_summary">%1$d× %2$s</string>
+    <string name="kitchen_items_separator">" · "</string>
+
+    <string name="kitchen_connection_connecting">CONECTANDO AO SERVIDOR</string>
+    <string name="kitchen_connection_reconnecting">RECONECTANDO (tentativa %1$d)</string>
+    <string name="kitchen_connection_stale">Os pedidos abaixo podem estar desatualizados.</string>
+
+    <string name="kitchen_alert_title">%1$s CANCELADO · NÃO FAZER</string>
+    <string name="kitchen_alert_context">Estava em %1$s · %2$s</string>
+    <string name="kitchen_alert_dismiss">CIENTE</string>
+
+    <string name="kitchen_undo_message">%1$s foi para %2$s</string>
+    <string name="kitchen_undo_action">DESFAZER</string>
+    <string name="kitchen_notice_not_sent">%1$s não foi enviado: sem conexão. Voltou para %2$s.</string>
+    <string name="kitchen_notice_rejected">%1$s foi alterado em outro aparelho. Agora está em %2$s.</string>
+</resources>

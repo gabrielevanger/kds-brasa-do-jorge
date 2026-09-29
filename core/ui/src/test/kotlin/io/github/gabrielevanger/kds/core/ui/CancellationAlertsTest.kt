@@ -1,4 +1,4 @@
-package io.github.gabrielevanger.kds.feature.board
+package io.github.gabrielevanger.kds.core.ui
 
 import android.content.Context
 import androidx.compose.ui.test.assertCountEquals
@@ -50,7 +50,7 @@ class CancellationAlertsTest {
     fun alertaDizQualPedidoParar() {
         show(persistentListOf(alert(9)))
 
-        composeRule.onNodeWithText(context.getString(R.string.board_alert_title, "#0009")).assertIsDisplayed()
+        composeRule.onNodeWithText(context.getString(R.string.kitchen_alert_title, "#0009")).assertIsDisplayed()
     }
 
     @Test
@@ -58,14 +58,14 @@ class CancellationAlertsTest {
         show(persistentListOf(alert(9)))
 
         val context = context.getString(
-            R.string.board_alert_context,
-            context.getString(R.string.board_column_preparing),
-            context.getString(R.string.board_origin_table, 4),
+            R.string.kitchen_alert_context,
+            context.getString(R.string.kitchen_stage_preparing),
+            context.getString(R.string.kitchen_origin_table, 4),
         )
         composeRule.onNodeWithText(context).assertIsDisplayed()
     }
 
-    /** O card saiu do board: sem os itens no alerta, a cozinha não saberia o que parar de fazer. */
+    /** O card saiu da tela: sem os itens no alerta, a cozinha não saberia o que parar de fazer. */
     @Test
     fun alertaListaOQueEraOPedido() {
         show(persistentListOf(alert(9)))
@@ -79,7 +79,7 @@ class CancellationAlertsTest {
         val dismissed = mutableListOf<OrderId>()
         show(persistentListOf(alert(9), alert(12, StageTone.READY)), onDismiss = { dismissed += it })
 
-        composeRule.onAllNodesWithText(context.getString(R.string.board_alert_dismiss))[1].performClick()
+        composeRule.onAllNodesWithText(context.getString(R.string.kitchen_alert_dismiss))[1].performClick()
 
         assertEquals(listOf(OrderId(12)), dismissed)
     }

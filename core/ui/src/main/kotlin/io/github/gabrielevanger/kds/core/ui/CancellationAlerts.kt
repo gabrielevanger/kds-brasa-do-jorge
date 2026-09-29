@@ -1,4 +1,4 @@
-package io.github.gabrielevanger.kds.feature.board
+package io.github.gabrielevanger.kds.core.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -28,7 +28,7 @@ object CancellationAlertTags {
 }
 
 /**
- * Cancelamentos de pedidos que a cozinha já tinha começado. Ficam no topo do board, em vermelho,
+ * Cancelamentos de pedidos que a cozinha já tinha começado. Ficam no topo da tela, em vermelho,
  * e só saem com o toque em CIENTE: um pedido cancelado em preparo não pode passar despercebido.
  */
 @Composable
@@ -66,14 +66,14 @@ private fun CancellationAlert(alert: CancellationAlertUi, onDismiss: () -> Unit)
         )
         Column(modifier = Modifier.weight(EQUAL_SHARE), verticalArrangement = Arrangement.spacedBy(spacing.xxs)) {
             Text(
-                text = stringResource(R.string.board_alert_title, alert.reference),
+                text = stringResource(R.string.kitchen_alert_title, alert.reference),
                 style = typography.columnTitle,
                 color = colors.onCanceled,
             )
             Text(
                 text = stringResource(
-                    R.string.board_alert_context,
-                    alert.previousTone.columnTitle(),
+                    R.string.kitchen_alert_context,
+                    alert.previousTone.title(),
                     alert.origin.text(alert.tableNumber),
                 ),
                 style = typography.label,
@@ -84,7 +84,7 @@ private fun CancellationAlert(alert: CancellationAlertUi, onDismiss: () -> Unit)
         Box(modifier = Modifier.width(KdsTheme.sizes.secondaryActionWidth)) {
             KitchenActionButton(
                 icon = DesignR.drawable.ic_action_ready,
-                text = stringResource(R.string.board_alert_dismiss),
+                text = stringResource(R.string.kitchen_alert_dismiss),
                 containerColor = colors.onCanceled,
                 contentColor = colors.canceled,
                 onClick = onDismiss,
@@ -95,8 +95,8 @@ private fun CancellationAlert(alert: CancellationAlertUi, onDismiss: () -> Unit)
 
 @Composable
 private fun itemsSummary(items: ImmutableList<OrderItemUi>): String {
-    val separator = stringResource(R.string.board_alert_items_separator)
+    val separator = stringResource(R.string.kitchen_items_separator)
     return items
-        .map { item -> stringResource(R.string.board_alert_item, item.quantity, item.name) }
+        .map { item -> stringResource(R.string.kitchen_item_summary, item.quantity, item.name) }
         .joinToString(separator)
 }

@@ -1,4 +1,4 @@
-package io.github.gabrielevanger.kds.feature.board
+package io.github.gabrielevanger.kds.core.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,7 +25,7 @@ object ConnectionBannerTags {
 }
 
 /**
- * Estado da conexão com o servidor. Conectado não mostra nada; sem conexão, o board continua
+ * Estado da conexão com o servidor. Conectado não mostra nada; sem conexão, a tela continua
  * visível com o último estado conhecido, e a faixa avisa que ele pode estar desatualizado.
  */
 @Composable
@@ -35,7 +35,7 @@ fun ConnectionBanner(connection: ConnectionState, modifier: Modifier = Modifier)
         ConnectionState.Connected -> Unit
 
         ConnectionState.Connecting -> Banner(
-            title = stringResource(R.string.board_connection_connecting),
+            title = stringResource(R.string.kitchen_connection_connecting),
             detail = null,
             containerColor = colors.surfaceRaised,
             contentColor = colors.onSurface,
@@ -43,8 +43,8 @@ fun ConnectionBanner(connection: ConnectionState, modifier: Modifier = Modifier)
         )
 
         is ConnectionState.Reconnecting -> Banner(
-            title = stringResource(R.string.board_connection_reconnecting, connection.attempt),
-            detail = stringResource(R.string.board_connection_stale),
+            title = stringResource(R.string.kitchen_connection_reconnecting, connection.attempt),
+            detail = stringResource(R.string.kitchen_connection_stale),
             containerColor = colors.attention,
             contentColor = colors.onAttention,
             modifier = modifier,

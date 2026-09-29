@@ -1,4 +1,4 @@
-package io.github.gabrielevanger.kds.feature.board
+package io.github.gabrielevanger.kds.core.ui
 
 import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
@@ -24,24 +24,24 @@ class FeedbackBarTest {
 
     private val context: Context = ApplicationProvider.getApplicationContext()
     private val undo = UndoUi(OrderId(5), "#0005", StageTone.PREPARING)
-    private val notice = BoardNotice(BoardNotice.Kind.NOT_SENT, "#0005", StageTone.QUEUED)
+    private val notice = KitchenNotice(KitchenNotice.Kind.NOT_SENT, "#0005", StageTone.QUEUED)
 
-    private fun show(notice: BoardNotice?, undo: UndoUi?, onUndo: (UndoUi) -> Unit = {}) {
+    private fun show(notice: KitchenNotice?, undo: UndoUi?, onUndo: (UndoUi) -> Unit = {}) {
         composeRule.setContent {
             KdsTheme { FeedbackBar(notice = notice, undo = undo, onUndo = onUndo) }
         }
     }
 
-    private fun columnTitle(resId: Int) = context.getString(resId)
+    private fun stageTitle(resId: Int) = context.getString(resId)
 
     @Test
     fun desfazerMostraOPedidoEAEtapaParaOndeFoi() {
         show(notice = null, undo = undo)
 
         val message = context.getString(
-            R.string.board_undo_message,
+            R.string.kitchen_undo_message,
             "#0005",
-            columnTitle(R.string.board_column_preparing),
+            stageTitle(R.string.kitchen_stage_preparing),
         )
         composeRule.onNodeWithText(message).assertIsDisplayed()
     }
@@ -51,7 +51,7 @@ class FeedbackBarTest {
         val undone = mutableListOf<UndoUi>()
         show(notice = null, undo = undo, onUndo = { undone += it })
 
-        composeRule.onNodeWithText(context.getString(R.string.board_undo_action)).performClick()
+        composeRule.onNodeWithText(context.getString(R.string.kitchen_undo_action)).performClick()
 
         assertEquals(listOf(undo), undone)
     }
@@ -61,9 +61,9 @@ class FeedbackBarTest {
         show(notice = notice, undo = undo)
 
         val message = context.getString(
-            R.string.board_notice_not_sent,
+            R.string.kitchen_notice_not_sent,
             "#0005",
-            columnTitle(R.string.board_column_queued),
+            stageTitle(R.string.kitchen_stage_queued),
         )
         composeRule.onNodeWithText(message).assertIsDisplayed()
         composeRule.onNodeWithTag(FeedbackBarTags.UNDO).assertDoesNotExist()

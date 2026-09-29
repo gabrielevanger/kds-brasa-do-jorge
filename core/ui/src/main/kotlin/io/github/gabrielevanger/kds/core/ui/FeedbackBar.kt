@@ -1,4 +1,4 @@
-package io.github.gabrielevanger.kds.feature.board
+package io.github.gabrielevanger.kds.core.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -31,7 +31,7 @@ object FeedbackBarTags {
  * quem tocou precisa saber primeiro que o pedido voltou de etapa.
  */
 @Composable
-fun FeedbackBar(notice: BoardNotice?, undo: UndoUi?, onUndo: (UndoUi) -> Unit, modifier: Modifier = Modifier) {
+fun FeedbackBar(notice: KitchenNotice?, undo: UndoUi?, onUndo: (UndoUi) -> Unit, modifier: Modifier = Modifier) {
     when {
         notice != null -> NoticeBar(notice, modifier)
         undo != null -> UndoBar(undo, onUndo = { onUndo(undo) }, modifier = modifier)
@@ -52,7 +52,7 @@ private fun UndoBar(undo: UndoUi, onUndo: () -> Unit, modifier: Modifier) {
         horizontalArrangement = Arrangement.spacedBy(spacing.m),
     ) {
         Text(
-            text = stringResource(R.string.board_undo_message, undo.reference, undo.targetTone.columnTitle()),
+            text = stringResource(R.string.kitchen_undo_message, undo.reference, undo.targetTone.title()),
             style = KdsTheme.typography.itemName,
             color = colors.onSurface,
             modifier = Modifier.weight(EQUAL_SHARE),
@@ -60,7 +60,7 @@ private fun UndoBar(undo: UndoUi, onUndo: () -> Unit, modifier: Modifier) {
         Box(modifier = Modifier.width(KdsTheme.sizes.secondaryActionWidth)) {
             KitchenActionButton(
                 icon = DesignR.drawable.ic_undo,
-                text = stringResource(R.string.board_undo_action),
+                text = stringResource(R.string.kitchen_undo_action),
                 containerColor = colors.onSurface,
                 contentColor = colors.background,
                 onClick = onUndo,
@@ -70,12 +70,12 @@ private fun UndoBar(undo: UndoUi, onUndo: () -> Unit, modifier: Modifier) {
 }
 
 @Composable
-private fun NoticeBar(notice: BoardNotice, modifier: Modifier) {
+private fun NoticeBar(notice: KitchenNotice, modifier: Modifier) {
     val colors = KdsTheme.colors
     val spacing = KdsTheme.spacing
     val message = when (notice.kind) {
-        BoardNotice.Kind.NOT_SENT -> R.string.board_notice_not_sent
-        BoardNotice.Kind.REJECTED -> R.string.board_notice_rejected
+        KitchenNotice.Kind.NOT_SENT -> R.string.kitchen_notice_not_sent
+        KitchenNotice.Kind.REJECTED -> R.string.kitchen_notice_rejected
     }
     Row(
         modifier = modifier
@@ -94,7 +94,7 @@ private fun NoticeBar(notice: BoardNotice, modifier: Modifier) {
             modifier = Modifier.size(KdsTheme.sizes.iconL),
         )
         Text(
-            text = stringResource(message, notice.reference, notice.currentTone.columnTitle()),
+            text = stringResource(message, notice.reference, notice.currentTone.title()),
             style = KdsTheme.typography.itemName,
             color = colors.onAttention,
         )

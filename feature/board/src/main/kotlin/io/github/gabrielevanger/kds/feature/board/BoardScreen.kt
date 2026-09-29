@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -25,6 +26,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -41,6 +43,11 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
+
+/** Tags usadas pelos testes de interface para localizar as listas de cada coluna. */
+object BoardTags {
+    fun column(tone: StageTone): String = "board_column_" + tone.name
+}
 
 @Composable
 fun BoardRoute(viewModel: BoardViewModel = hiltViewModel()) {
@@ -135,6 +142,13 @@ private fun BoardColumn(
     modifier: Modifier = Modifier,
 ) {
     val spacing = KdsTheme.spacing
+    val listState = rememberLazyListState()
+    val oldestOrderId = orders.firstOrNull()?.id
+    // A LazyColumn mantém no lugar o card visível quando entra um pedido acima dele, escondendo o mais
+    // antigo. Se a coluna estava no início, volta ao topo; se alguém rolou para baixo, a posição fica.
+    LaunchedEffect(oldestOrderId) {
+        if (listState.firstVisibleItemIndex <= CARD_PUSHED_BY_INSERT) listState.scrollToItem(FIRST_CARD)
+    }
     Column(modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(spacing.s)) {
         ColumnHeader(tone = tone, count = orders.size)
         if (orders.isEmpty()) {
@@ -146,7 +160,11 @@ private fun BoardColumn(
             )
         } else {
             // key estável por pedido: um pedido novo não recompõe nem reposiciona os outros cards.
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(spacing.s)) {
+            LazyColumn(
+                state = listState,
+                verticalArrangement = Arrangement.spacedBy(spacing.s),
+                modifier = Modifier.testTag(BoardTags.column(tone)),
+            ) {
                 items(items = orders, key = { it.id.value }, contentType = { ORDER_CARD_CONTENT_TYPE }) { card ->
                     OrderCard(card = card, onAdvance = { onAdvance(card.id) })
                 }
@@ -180,6 +198,11 @@ private fun ColumnHeader(tone: StageTone, count: Int) {
 }
 
 private const val ORDER_CARD_CONTENT_TYPE = "order_card"
+
+private const val FIRST_CARD = 0
+
+/** Posição em que o card do topo fica depois que um pedido mais antigo entra acima dele. */
+private const val CARD_PUSHED_BY_INSERT = 1
 
 /** Tempo de leitura do aviso de falha, igual à janela de desfazer para manter um ritmo único. */
 private val NOTICE_DURATION = 5.seconds

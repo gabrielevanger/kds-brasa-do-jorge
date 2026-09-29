@@ -53,6 +53,7 @@ Peso definido por quanto a dor custa (cliente perdido, retrabalho, prejuízo) e 
 - O tempo de espera conta desde a criação do pedido, porque é o tempo que o cliente sente.
 - Faixas de atraso iniciais: até 8 min normal, 8 a 15 min atenção, acima de 15 min atrasado. Configuráveis.
 - Um tablet na montagem com a visão geral; "pronto" é marcado no pedido inteiro.
+- Um pedido ativo que deixa de vir no snapshot após uma reconexão saiu do servidor por motivo desconhecido e é removido da tela sem alerta. O mock sempre envia todos os pedidos; a regra protege contra um back que omita os finalizados.
 - Os números do cenário não fecham (60% de 3.200 pedidos dá ~63 por hora no pico; o texto diz até 14 em 20 min, ~42 por hora). O teste de carga usa o maior, com margem.
 
 ## Fora de escopo (v2)

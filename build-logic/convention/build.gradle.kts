@@ -13,7 +13,7 @@ kotlin {
     jvmToolchain(
         libs.versions.jvmToolchain
             .get()
-            .toInt()
+            .toInt(),
     )
 }
 

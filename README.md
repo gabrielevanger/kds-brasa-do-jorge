@@ -66,7 +66,21 @@ O mock sobe em `http://localhost:4000` e cria um pedido novo a cada 5 segundos.
 
 ### 2. Instalar o app
 
-Com o emulador aberto, em outro terminal:
+Abra outro terminal na raiz do repositório (o mock continua rodando no primeiro) e deixe o emulador aberto.
+
+Se o projeto nunca foi aberto no Android Studio, diga ao Gradle onde está o Android SDK; ao abrir o projeto, o Android Studio faz isso sozinho. Com o SDK no local padrão:
+
+```bash
+export ANDROID_HOME="$HOME/Library/Android/sdk"
+```
+
+No Linux, o local padrão é `$HOME/Android/Sdk`. No PowerShell do Windows:
+
+```powershell
+$env:ANDROID_HOME="$env:LOCALAPPDATA\Android\Sdk"
+```
+
+No mesmo terminal:
 
 ```bash
 ./gradlew :app:installDebug

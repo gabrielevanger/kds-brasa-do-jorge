@@ -8,7 +8,14 @@ import androidx.compose.ui.unit.dp
 
 /** Escala de espaçamento em passos de 4 dp. Componentes não usam valores fora dela. */
 @Immutable
-data class KdsSpacing(val xxs: Dp = 4.dp, val xs: Dp = 8.dp, val s: Dp = 12.dp, val m: Dp = 16.dp, val l: Dp = 24.dp)
+data class KdsSpacing(
+    val none: Dp = 0.dp,
+    val xxs: Dp = 4.dp,
+    val xs: Dp = 8.dp,
+    val s: Dp = 12.dp,
+    val m: Dp = 16.dp,
+    val l: Dp = 24.dp,
+)
 
 /** Tamanhos fixos. Alvos de toque dimensionados para mão suja e pressa: nenhuma ação exige mira. */
 @Immutable

@@ -28,9 +28,11 @@ fun KitchenActionButton(
     contentColor: Color,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     Button(
         onClick = onClick,
+        enabled = enabled,
         modifier = modifier
             .fillMaxWidth()
             .height(KdsTheme.sizes.actionButtonHeight),

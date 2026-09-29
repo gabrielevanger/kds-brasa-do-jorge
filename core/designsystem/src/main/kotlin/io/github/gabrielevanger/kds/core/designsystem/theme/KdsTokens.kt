@@ -24,6 +24,7 @@ data class KdsSizes(
     val iconM: Dp = 28.dp,
     val iconL: Dp = 32.dp,
     val borderWidth: Dp = 2.dp,
+    val cardBorderWidth: Dp = 1.dp,
     val minTouchTarget: Dp = 64.dp,
     val actionButtonHeight: Dp = 72.dp,
     /** Largura de ações secundárias ao lado de um texto, como o "Desfazer" da barra inferior. */

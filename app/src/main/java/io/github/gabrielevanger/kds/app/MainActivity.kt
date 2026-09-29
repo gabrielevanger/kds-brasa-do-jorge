@@ -6,8 +6,10 @@ import android.view.Window
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -23,10 +25,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            KdsTheme {
-                val configuration = LocalConfiguration.current
-                val isTelevision =
-                    configuration.uiMode and Configuration.UI_MODE_TYPE_MASK == Configuration.UI_MODE_TYPE_TELEVISION
+            val configuration = LocalConfiguration.current
+            val isTelevision =
+                configuration.uiMode and Configuration.UI_MODE_TYPE_MASK == Configuration.UI_MODE_TYPE_TELEVISION
+            // A TV não tem ajuste de modo escuro para o dono escolher; o painel de parede fica sempre escuro.
+            val darkTheme = isTelevision || isSystemInDarkTheme()
+            SystemBarsAppearance(window, darkTheme)
+            KdsTheme(darkTheme = darkTheme) {
                 when (KitchenScreen.forDevice(configuration.smallestScreenWidthDp, isTelevision)) {
                     KitchenScreen.BOARD -> {
                         KitchenDisplayMode(window)
@@ -45,10 +50,21 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/** Ícones da barra de status e de navegação escuros no tema claro, e claros no escuro, para não sumirem. */
+@Composable
+private fun SystemBarsAppearance(window: Window, darkTheme: Boolean) {
+    SideEffect {
+        WindowCompat.getInsetsController(window, window.decorView).apply {
+            isAppearanceLightStatusBars = !darkTheme
+            isAppearanceLightNavigationBars = !darkTheme
+        }
+    }
+}
+
 /**
  * No pico ninguém toca no tablet por minutos, e na TV ninguém toca nunca: a tela não pode apagar
- * nem entrar no descanso de tela. As barras do sistema
- * somem para ganhar espaço e evitar um "voltar" acidental; um deslize na borda as mostra.
+ * nem entrar no descanso de tela. As barras do sistema somem para ganhar espaço e evitar um
+ * "voltar" acidental; um deslize na borda as mostra.
  * O celular do garçom fica de fora: ele vive no bolso e usa o aparelho para outras coisas.
  */
 @Composable

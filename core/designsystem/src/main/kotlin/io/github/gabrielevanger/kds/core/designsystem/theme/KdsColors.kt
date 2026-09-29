@@ -4,9 +4,9 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 
 /**
- * Cores do KDS. Tema escuro de alto contraste: a cozinha é iluminada, a tela é vista de longe
- * e o turno é longo. Cada par cor/texto tem contraste mínimo WCAG AA (verificado em teste).
- * Cor nunca é o único sinal de estado: ícone e texto sempre acompanham.
+ * Cores do KDS, em duas paletas com o mesmo significado. Cada par cor/texto tem contraste mínimo
+ * WCAG AA nas duas (verificado em teste). Cor nunca é o único sinal de estado: ícone e texto
+ * sempre acompanham.
  */
 @Immutable
 data class KdsColors(
@@ -16,6 +16,8 @@ data class KdsColors(
     val onSurface: Color,
     val onSurfaceMuted: Color,
     val outline: Color,
+    /** Contorno do card: no tema claro, card branco sobre fundo cinza-claro precisa dele para se separar. */
+    val cardOutline: Color,
     val queued: Color,
     val onQueued: Color,
     val preparing: Color,
@@ -32,13 +34,18 @@ data class KdsColors(
     val modifierHighlight: Color,
 )
 
-val KitchenColors = KdsColors(
+/**
+ * Escuro, o padrão da cozinha: as cores de estado se destacam mais sobre fundo escuro, e a tela
+ * brilha menos num turno longo perto da chapa.
+ */
+val KitchenDarkColors = KdsColors(
     background = Color(0xFF0E0F11),
     surface = Color(0xFF1B1D21),
     surfaceRaised = Color(0xFF26292E),
     onSurface = Color(0xFFF5F5F5),
     onSurfaceMuted = Color(0xFFB8BCC4),
     outline = Color(0xFF3A3E45),
+    cardOutline = Color(0xFF2A2D33),
     queued = Color(0xFF5B8DEF),
     onQueued = Color(0xFF0E0F11),
     preparing = Color(0xFFFFA726),
@@ -52,4 +59,31 @@ val KitchenColors = KdsColors(
     canceled = Color(0xFFB71C1C),
     onCanceled = Color(0xFFFFFFFF),
     modifierHighlight = Color(0xFFFFD54F),
+)
+
+/**
+ * Claro, para ambientes muito iluminados ou por preferência do dono. Os tons de etapa ficam mais
+ * escuros para o texto branco manter o contraste, e o modificador sai do amarelo, que some no branco.
+ */
+val KitchenLightColors = KdsColors(
+    background = Color(0xFFF3F4F6),
+    surface = Color(0xFFFFFFFF),
+    surfaceRaised = Color(0xFFE8EAEE),
+    onSurface = Color(0xFF111317),
+    onSurfaceMuted = Color(0xFF4B5059),
+    outline = Color(0xFFC9CDD4),
+    cardOutline = Color(0xFFC9CDD4),
+    queued = Color(0xFF1D5FD1),
+    onQueued = Color(0xFFFFFFFF),
+    preparing = Color(0xFFF59E0B),
+    onPreparing = Color(0xFF1A1200),
+    ready = Color(0xFF15803D),
+    onReady = Color(0xFFFFFFFF),
+    attention = Color(0xFFFACC15),
+    onAttention = Color(0xFF1A1400),
+    late = Color(0xFFC62828),
+    onLate = Color(0xFFFFFFFF),
+    canceled = Color(0xFFB71C1C),
+    onCanceled = Color(0xFFFFFFFF),
+    modifierHighlight = Color(0xFF92400E),
 )

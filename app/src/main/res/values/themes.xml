@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Fundo da janela antes do primeiro quadro do Compose: sem ele, o tema claro piscaria escuro ao abrir. -->
+    <style name="Theme.Kds" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/kds_window_background</item>
+    </style>
+</resources>

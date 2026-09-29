@@ -45,6 +45,7 @@ O desafio pede para contar como a IA foi usada: onde ajudou, onde errou e foi co
 - **Documento prometendo um teste que não existia:** o SPECS dizia que "o teste de carga usa o maior", e não havia teste de carga. Corrigido, e o pico passou a ser medido de verdade.
 - **Leitura errada da medição:** com o build debug, a IA concluiu que "a carga não piora a fluidez". Por sugestão minha, medimos também o build release, e a conclusão mudou: no release, a carga aumenta os quadros lentos de 13,5% para 19,2%, sem travadas longas. O texto foi corrigido nos dois documentos.
 - **Descrição errada dos testes no `ARCHITECTURE.md`:** dizia que os fakes ficavam em `testFixtures`, onde estão só as fábricas de pedidos. Corrigido na conferência do documento contra o código, antes do commit.
+- **Build travado por arquivo em uso:** o `classes.jar` de um módulo ficou bloqueado. A primeira suspeita da IA foi o Android Studio aberto; fechá-lo não resolveu, e a causa real era um daemon do Gradle que ele deixou vivo. `gradlew --stop` liberou o arquivo, sem perder nada.
 
 ## O que eu decidi
 
@@ -57,4 +58,6 @@ O desafio pede para contar como a IA foi usada: onde ajudou, onde errou e foi co
 - **Densidade do board mantida** em cerca de um card e meio por coluna, priorizando a leitura a 2 metros.
 - **TV sem alerta de cancelamento**, aceitando a recomendação e o motivo.
 - **Medir o release**, e não só o debug, o que corrigiu a conclusão sobre o pico.
+- **Tema claro.** Olhando o app como usuário, achei estranho ser todo escuro. A IA defendeu o escuro como padrão de cozinha e propôs oferecer os dois temas seguindo o Android; aprovei a direção depois de ver o card no tema claro, antes de qualquer código.
+- **Polimento visual sem Figma.** Perguntei se valia montar um Figma; a IA recomendou polir direto no Compose, cada item ligado a uma dor da cozinha e com teste (itens agrupados, faixa de atraso, barra superior, animação). Escolhi esse pacote.
 - **Forma de trabalhar:** passos pequenos, mensagem de commit revisada antes, Conventional Commits formais em português, PR com merge commit para preservar o histórico.

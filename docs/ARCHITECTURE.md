@@ -130,6 +130,17 @@ Medição no emulador de tablet (60 s de uso com rolagens na fila, `dumpsys gfxi
 - O build release corta quase pela metade os quadros lentos: o debug é marcado como depurável, e o Android desliga otimizações do runtime nele.
 - No release, a carga aumenta a proporção de quadros lentos (de 13,5% para 19,2%), mas a cauda não piora: com centenas de pedidos chegando a cada 0,3 s, o p99 ficou em 34 ms, contra 61 ms com o board quase vazio. Não há travadas longas.
 - O release foi medido sem R8 e com HTTP liberado só no experimento local, porque o release aceita apenas HTTPS e o mock é HTTP. O emulador tem GPU emulada e variação entre rodadas; o número de produção precisa ser medido num tablet físico, o que está na v2.
+- A medição foi feita antes do polimento visual (faixa de atraso, barra superior e animação dos cards). Os três foram desenhados para não pesar: a faixa e a hora não recompõem o card a cada segundo, e só os cards visíveis animam.
+
+## Leitura rápida na cozinha
+
+O que a cozinha precisa ler de longe, no pico, sem parar o que está fazendo:
+
+- **Itens iguais agrupados.** O servidor manda o mesmo item em linhas separadas ("2×, 1× e 1× Onion Rings"), e somar de cabeça no pico é erro na certa; o card mostra "4× Onion Rings". Só se juntam linhas com o mesmo nome, os mesmos modificadores e a mesma observação: um "sem cebola" nunca é engolido por um lanche normal.
+- **Faixa lateral de atraso** na cor do selo do timer (âmbar em atenção, vermelha em atraso), para os atrasados se destacarem na coluna sem ler o número. A faixa é calculada com `derivedStateOf`, que só avisa quando o pedido muda de faixa (duas vezes na vida dele), e pintada na fase de desenho (`drawBehind`), sem recompor nem remedir o card.
+- **Barra superior** com o nome da casa, os filtros, a hora e o estado da conexão sempre visível, com ponto e texto (AO VIVO, CONECTANDO, SEM CONEXÃO). Conectado também aparece: sem isso, ninguém sabe se a tela parada está viva ou travada. A hora recompõe só na virada do minuto.
+- **Cards animados** ao entrar, sair e mudar de lugar, com as animações padrão do Compose: a cozinha percebe o que mudou em vez de ver a coluna saltar.
+- **Tema claro e escuro.** O escuro é o padrão de cozinha: as cores de estado se destacam mais e a tela brilha menos num turno longo. Mas uma cozinha ou um salão muito claros fazem a tela escura parecer um buraco, e o dono deve poder escolher sem mexer em código. O app segue o modo do Android e troca sem reabrir; a paleta clara tem o mesmo significado de cada cor, com tons mais escuros para o texto branco e o modificador em âmbar escuro, porque o amarelo some no branco. O teste de contraste WCAG AA roda nas duas paletas. A TV fica sempre escura: o Android TV não oferece o ajuste ao dono.
 
 ## Contexto de uso: tablet, celular e TV
 
@@ -179,14 +190,14 @@ O store e o escopo de coroutines são `@Singleton`, interfaces são ligadas com 
 |---|---|
 | core/domain | 110 |
 | core/data | 32 |
-| core/designsystem | 8 |
-| core/ui | 42 |
-| feature/board | 27 |
+| core/designsystem | 9 |
+| core/ui | 52 |
+| feature/board | 31 |
 | feature/expedition | 21 |
 | app | 8 |
-| **Total** | **248** |
+| **Total** | **263** |
 
-- **Onde importa:** transições, evento duplicado e fora de ordem, reconexão, envio adiado, backoff, sinais sonoros e o card do pedido.
+- **Onde importa:** transições, evento duplicado e fora de ordem, reconexão, envio adiado, backoff, sinais sonoros, agrupamento de itens, contraste das duas paletas e o card do pedido.
 - **Fakes em vez de mocks no domínio:** fábricas de pedidos em `testFixtures`, compartilhadas pelos módulos; stream e comandos falsos no teste do store; eventos duplicados e fora de ordem alimentados direto no reducer; tempo virtual para o backoff e a janela de desfazer.
 - **Interface com Robolectric na JVM**, e não teste instrumentado: roda no CI em todo PR, sem emulador lento e instável. Os testes rodam em Java 21 (exigido pelo Robolectric para API 36) enquanto o código compila para 17, usam API 36 porque o Espresso ainda chama uma API removida no Android 17, e simulam o celular ou o tablet conforme a tela. Cada uma dessas configurações foi provada necessária removendo-a e vendo o teste falhar.
 - **Teste de mutação manual em cada regra de negócio:** a regra é quebrada de propósito e algum teste precisa falhar. Isso revelou testes que faltavam e dois bugs reais, contados em [AI_USAGE.md](AI_USAGE.md).
@@ -198,5 +209,5 @@ O store e o escopo de coroutines são `@Singleton`, interfaces são ligadas com 
 - **Toque perdido se o app morrer na janela de 5 s.** Custo aceito do envio adiado; a v2 pode persistir o envio agendado.
 - **Fila offline de ações.** Hoje uma ação sem rede volta com aviso; a v2 pode enfileirar e reenviar.
 - **Build release com R8 e medição em tablet físico.** Exige regras de keep para Hilt, serialization e Retrofit; um erro nelas quebra o app só no release, risco desnecessário perto da entrega.
-- **Densidade do board.** Cerca de um card e meio por coluna no tablet de 1920x1200, priorizando leitura a 2 m.
+- **Densidade do board.** Poucos cards por coluna no tablet de 1920x1200, priorizando leitura a 2 m; os itens agrupados e os filtros na barra superior devolveram parte da altura.
 - **Fora do escopo por falta de dado no back:** sincronizar chapa e fritadeira, pronto por item e métricas de tempo médio. A priorização entre delivery e salão é decisão do dono, não do sistema.

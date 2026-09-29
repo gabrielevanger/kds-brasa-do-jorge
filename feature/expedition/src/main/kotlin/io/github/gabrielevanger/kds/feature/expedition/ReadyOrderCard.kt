@@ -1,5 +1,6 @@
 package io.github.gabrielevanger.kds.feature.expedition
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -52,6 +53,7 @@ fun ReadyOrderCard(order: ReadyOrderUi, onDeliver: () -> Unit, modifier: Modifie
             .testTag(ReadyOrderCardTags.CARD),
         shape = KdsTheme.shapes.card,
         color = colors.surface,
+        border = BorderStroke(KdsTheme.sizes.cardBorderWidth, colors.cardOutline),
     ) {
         Column(modifier = Modifier.padding(spacing.m), verticalArrangement = Arrangement.spacedBy(spacing.s)) {
             // No celular, uma origem longa ("CARDÁPIO WEB") desce para a linha de baixo em vez de espremer o número.

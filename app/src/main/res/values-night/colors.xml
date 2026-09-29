@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Mesmo valor de KitchenDarkColors.background, no design system. -->
+    <color name="kds_window_background">#FF0E0F11</color>
+</resources>

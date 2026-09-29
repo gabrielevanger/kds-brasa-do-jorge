@@ -1,25 +1,27 @@
 package io.github.gabrielevanger.kds.core.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
+import java.util.stream.Stream
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Named
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
 
 /**
- * "Legível a distância" como regra verificada: todo par texto/fundo do tema precisa de
+ * "Legível a distância" como regra verificada: todo par texto/fundo de cada tema precisa de
  * contraste WCAG 2.1 nível AA (4,5:1 para texto comum).
  */
 class KdsColorsContrastTest {
 
-    private val colors = KitchenColors
-
-    private val pairs = mapOf(
+    private fun pairs(colors: KdsColors) = mapOf(
         "texto no fundo" to (colors.onSurface to colors.background),
         "texto no card" to (colors.onSurface to colors.surface),
         "texto no card elevado" to (colors.onSurface to colors.surfaceRaised),
         "texto secundário no card" to (colors.onSurfaceMuted to colors.surface),
+        "texto secundário no fundo" to (colors.onSurfaceMuted to colors.background),
         "fila" to (colors.onQueued to colors.queued),
         "preparando" to (colors.onPreparing to colors.preparing),
         "pronto" to (colors.onReady to colors.ready),
@@ -29,9 +31,10 @@ class KdsColorsContrastTest {
         "modificador no card" to (colors.modifierHighlight to colors.surface),
     )
 
-    @Test
-    fun `todo par de texto e fundo atinge contraste WCAG AA`() {
-        val failures = pairs.mapNotNull { (name, pair) ->
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("palettes")
+    fun `todo par de texto e fundo atinge contraste WCAG AA`(colors: KdsColors) {
+        val failures = pairs(colors).mapNotNull { (name, pair) ->
             val ratio = contrastRatio(pair.first, pair.second)
             if (ratio < AA_NORMAL_TEXT) "$name: %.2f:1".format(ratio) else null
         }
@@ -54,7 +57,13 @@ class KdsColorsContrastTest {
         return 0.2126 * channel(color.red) + 0.7152 * channel(color.green) + 0.0722 * channel(color.blue)
     }
 
-    private companion object {
-        const val AA_NORMAL_TEXT = 4.5
+    companion object {
+        private const val AA_NORMAL_TEXT = 4.5
+
+        @JvmStatic
+        fun palettes(): Stream<Named<KdsColors>> = Stream.of(
+            Named.of("tema escuro", KitchenDarkColors),
+            Named.of("tema claro", KitchenLightColors),
+        )
     }
 }

@@ -1,5 +1,6 @@
 package io.github.gabrielevanger.kds.feature.board
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -56,6 +57,7 @@ fun OrderCard(card: OrderCardUi, onAdvance: (() -> Unit)?, modifier: Modifier = 
             .testTag(OrderCardTags.CARD),
         shape = KdsTheme.shapes.card,
         color = KdsTheme.colors.surface,
+        border = BorderStroke(KdsTheme.sizes.cardBorderWidth, KdsTheme.colors.cardOutline),
     ) {
         Column(modifier = Modifier.padding(spacing.m), verticalArrangement = Arrangement.spacedBy(spacing.s)) {
             Row(

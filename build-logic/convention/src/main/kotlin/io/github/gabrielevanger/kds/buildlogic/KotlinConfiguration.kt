@@ -4,8 +4,11 @@ import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.jvm.toolchain.JavaToolchainService
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
 
@@ -35,7 +38,12 @@ internal fun Project.configureUnitTests() {
         add("testImplementation", libs.library("kotlinx-coroutines-test"))
         add("testImplementation", libs.library("turbine"))
     }
+    // O código compila para Java 17; os testes executam num JVM mais novo, exigido pelo Robolectric.
+    val testLauncher = extensions.getByType<JavaToolchainService>().launcherFor {
+        languageVersion.set(JavaLanguageVersion.of(libs.intVersionOf("testJvm")))
+    }
     tasks.withType<Test>().configureEach {
         useJUnitPlatform()
+        javaLauncher.set(testLauncher)
     }
 }

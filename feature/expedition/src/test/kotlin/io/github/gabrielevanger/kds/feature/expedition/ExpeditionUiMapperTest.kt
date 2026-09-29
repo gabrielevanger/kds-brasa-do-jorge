@@ -1,6 +1,7 @@
 package io.github.gabrielevanger.kds.feature.expedition
 
 import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenEvent
+import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenSignal
 import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenState
 import io.github.gabrielevanger.kds.core.domain.kitchen.OrderReducer
 import io.github.gabrielevanger.kds.core.domain.model.Order
@@ -126,6 +127,57 @@ class ExpeditionUiMapperTest {
 
         assertEquals(listOf("Smash Bacon" to 2, "Coca-Cola Lata" to 2), card.items.map { it.name to it.quantity })
         assertEquals(4, card.itemCount)
+    }
+
+    @Nested
+    inner class `Sinais sonoros` {
+
+        private val preparing = anOrder(id = 1, stage = Stage.PREPARING, version = 2)
+        private val ready = readyOrder(id = 2, minutesAgo = 1)
+        private val loaded = stateOf(preparing, ready)
+
+        private fun signalsAfter(vararg events: KitchenEvent) =
+            ExpeditionUiMapper.signals(loaded, events.fold(loaded, OrderReducer::reduce))
+
+        @Test
+        fun `pedido que fica pronto avisa o garcom`() {
+            val signals = signalsAfter(KitchenEvent.OrderReceived(preparing.copy(stage = Stage.READY, version = 3)))
+
+            assertEquals(setOf(KitchenSignal.ORDER_READY), signals)
+        }
+
+        /** Pedido novo entra na fila da cozinha: não há nada para o garçom buscar ainda. */
+        @Test
+        fun `pedido novo nao toca na expedicao`() {
+            assertEquals(emptySet<KitchenSignal>(), signalsAfter(KitchenEvent.OrderReceived(anOrder(id = 3))))
+        }
+
+        @Test
+        fun `cancelamento de pedido pronto toca o alarme`() {
+            val signals = signalsAfter(KitchenEvent.OrderReceived(ready.copy(stage = Stage.CANCELED, version = 4)))
+
+            assertEquals(setOf(KitchenSignal.CANCELLATION), signals)
+        }
+
+        /** Um alerta sem CIENTE não pode virar sirene a cada evento que chega. */
+        @Test
+        fun `alerta ainda na tela nao repete o alarme`() {
+            val alerted = OrderReducer.reduce(
+                loaded,
+                KitchenEvent.OrderReceived(ready.copy(stage = Stage.CANCELED, version = 4)),
+            )
+            val next = OrderReducer.reduce(alerted, KitchenEvent.OrderReceived(anOrder(id = 3)))
+
+            assertEquals(emptySet<KitchenSignal>(), ExpeditionUiMapper.signals(alerted, next))
+        }
+
+        /** Sem alerta desse pedido na tela, o alarme tocaria sem o garçom saber por quê. */
+        @Test
+        fun `cancelamento de pedido em preparo nao toca na expedicao`() {
+            val signals = signalsAfter(KitchenEvent.OrderReceived(preparing.copy(stage = Stage.CANCELED, version = 3)))
+
+            assertEquals(emptySet<KitchenSignal>(), signals)
+        }
     }
 
     @Nested

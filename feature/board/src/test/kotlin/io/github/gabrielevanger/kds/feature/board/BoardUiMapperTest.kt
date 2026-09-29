@@ -2,6 +2,7 @@ package io.github.gabrielevanger.kds.feature.board
 
 import io.github.gabrielevanger.kds.core.designsystem.component.StageTone
 import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenEvent
+import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenSignal
 import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenState
 import io.github.gabrielevanger.kds.core.domain.kitchen.OrderReducer
 import io.github.gabrielevanger.kds.core.domain.model.Order
@@ -105,6 +106,37 @@ class BoardUiMapperTest {
             val card = map(stateOf(combo)).column(StageTone.QUEUED).single()
 
             assertEquals(2, card.items.size)
+        }
+    }
+
+    @Nested
+    inner class `Sinais sonoros` {
+
+        private val preparing = anOrder(id = 1, stage = Stage.PREPARING, version = 2)
+        private val loaded = stateOf(preparing)
+
+        /** Quem marca o pronto é a própria cozinha: tocar de novo seria ruído. */
+        @Test
+        fun `pedido pronto nao toca no board`() {
+            val ready = OrderReducer.reduce(
+                loaded,
+                KitchenEvent.OrderReceived(preparing.copy(stage = Stage.READY, version = 3)),
+            )
+
+            assertEquals(emptySet<KitchenSignal>(), BoardUiMapper.signals(loaded, ready))
+        }
+
+        @Test
+        fun `pedido novo e cancelamento continuam tocando`() {
+            val next = listOf(
+                KitchenEvent.OrderReceived(anOrder(id = 2)),
+                KitchenEvent.OrderReceived(preparing.copy(stage = Stage.CANCELED, version = 3)),
+            ).fold(loaded, OrderReducer::reduce)
+
+            assertEquals(
+                setOf(KitchenSignal.NEW_ORDER, KitchenSignal.CANCELLATION),
+                BoardUiMapper.signals(loaded, next),
+            )
         }
     }
 

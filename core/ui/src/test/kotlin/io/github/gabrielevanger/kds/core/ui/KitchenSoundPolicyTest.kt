@@ -19,6 +19,18 @@ class KitchenSoundPolicyTest {
     }
 
     @Test
+    fun `pedido pronto toca bip`() {
+        assertEquals(KitchenSound.BEEP, policy.soundFor(setOf(KitchenSignal.ORDER_READY), now = 10.seconds))
+    }
+
+    @Test
+    fun `pedido pronto logo depois de um pedido novo respeita o intervalo`() {
+        policy.soundFor(newOrder, now = 0.seconds)
+
+        assertNull(policy.soundFor(setOf(KitchenSignal.ORDER_READY), now = 1.seconds))
+    }
+
+    @Test
     fun `rajada de pedidos dentro do intervalo toca um unico bip`() {
         val sounds = listOf(0, 500, 1_000, 2_999).map { policy.soundFor(newOrder, now = it.milliseconds) }
 

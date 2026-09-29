@@ -1,5 +1,7 @@
 package io.github.gabrielevanger.kds.feature.expedition
 
+import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenSignal
+import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenSignals
 import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenState
 import io.github.gabrielevanger.kds.core.domain.model.Order
 import io.github.gabrielevanger.kds.core.domain.model.PaymentStatus
@@ -20,6 +22,18 @@ internal object ExpeditionUiMapper {
             .toImmutableList(),
         undo = KitchenUiMapper.latestUndoable(state),
     )
+
+    /**
+     * Pedido pronto e cancelamento de pedido pronto: o mesmo recorte dos alertas desta tela, para
+     * o alarme nunca tocar sem um alerta visível que diga o motivo.
+     */
+    fun signals(previous: KitchenState, next: KitchenState): Set<KitchenSignal> = buildSet {
+        if (KitchenSignal.ORDER_READY in KitchenSignals.between(previous, next)) add(KitchenSignal.ORDER_READY)
+        val readyOrderCanceled = next.cancellationAlerts.any { (id, alert) ->
+            alert.previousStage == Stage.READY && id !in previous.cancellationAlerts
+        }
+        if (readyOrderCanceled) add(KitchenSignal.CANCELLATION)
+    }
 
     /**
      * Pedidos prontos na tela, incluindo a etapa otimista: o toque em ENTREGUE tira o card na hora,

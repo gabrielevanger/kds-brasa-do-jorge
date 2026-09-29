@@ -2,6 +2,8 @@ package io.github.gabrielevanger.kds.feature.board
 
 import io.github.gabrielevanger.kds.core.designsystem.component.StageTone
 import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenOrder
+import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenSignal
+import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenSignals
 import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenState
 import io.github.gabrielevanger.kds.core.domain.model.ProductionArea
 import io.github.gabrielevanger.kds.core.domain.sync.ConnectionState
@@ -24,6 +26,10 @@ internal object BoardUiMapper {
             undo = KitchenUiMapper.latestUndoable(state),
         )
     }
+
+    /** Todos os sinais, menos o de pronto: quem marca o pedido como pronto é a própria cozinha. */
+    fun signals(previous: KitchenState, next: KitchenState): Set<KitchenSignal> =
+        KitchenSignals.between(previous, next) - KitchenSignal.ORDER_READY
 
     /** Com filtro de estação, o pedido sem itens daquela estação não aparece. */
     private fun toCard(kitchenOrder: KitchenOrder, filter: StationFilter): OrderCardUi? {

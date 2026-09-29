@@ -3,10 +3,12 @@ package io.github.gabrielevanger.kds.feature.expedition
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenSignal
 import io.github.gabrielevanger.kds.core.domain.kitchen.OrderStore
 import io.github.gabrielevanger.kds.core.domain.model.OrderId
 import io.github.gabrielevanger.kds.core.ui.KitchenNotice
 import io.github.gabrielevanger.kds.core.ui.KitchenUiMapper
+import io.github.gabrielevanger.kds.core.ui.signals
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -27,6 +29,8 @@ class ExpeditionViewModel @Inject constructor(private val store: OrderStore) : V
 
     /** Avisos pontuais já com o número do pedido e a etapa em que o card ficou. */
     val notices: Flow<KitchenNotice> = store.notices.mapNotNull { KitchenUiMapper.mapNotice(it, store.state.value) }
+
+    val signals: Flow<Set<KitchenSignal>> = store.state.signals(ExpeditionUiMapper::signals)
 
     /** No balcão a única ação é entregar: o pedido pronto avança para entregue. */
     fun onDeliver(orderId: OrderId) = store.advance(orderId)

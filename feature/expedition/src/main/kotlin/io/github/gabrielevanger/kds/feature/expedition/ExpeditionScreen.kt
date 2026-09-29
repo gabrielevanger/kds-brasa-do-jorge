@@ -33,6 +33,7 @@ import io.github.gabrielevanger.kds.core.ui.EQUAL_SHARE
 import io.github.gabrielevanger.kds.core.ui.FeedbackBar
 import io.github.gabrielevanger.kds.core.ui.KitchenClockProvider
 import io.github.gabrielevanger.kds.core.ui.KitchenNotice
+import io.github.gabrielevanger.kds.core.ui.KitchenSoundEffect
 import io.github.gabrielevanger.kds.core.ui.UndoUi
 import io.github.gabrielevanger.kds.core.ui.rememberVisibleNotice
 
@@ -45,6 +46,7 @@ object ExpeditionTags {
 fun ExpeditionRoute(viewModel: ExpeditionViewModel = hiltViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val notice by rememberVisibleNotice(viewModel.notices)
+    KitchenSoundEffect(signals = viewModel.signals, vibrate = true)
     KitchenClockProvider {
         ExpeditionScreen(
             state = state,

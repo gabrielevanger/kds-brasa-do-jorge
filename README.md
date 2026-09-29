@@ -51,6 +51,50 @@ Android nativo em Kotlin com Jetpack Compose. Um único APK assume o papel do ap
 - **Expedição no celular:** bip e vibração quando um pedido fica pronto, COBRAR para pedido não pago e tempo no balcão.
 - **Tema claro e escuro**, seguindo o modo do Android, que por padrão é claro, em todos os aparelhos.
 
+## Desenho das telas
+
+### O fluxo
+
+```
+pedido chega -> Na fila -(Iniciar)-> Preparando -(Pronto)-> Pronto -(Entregue)-> sai da tela
+                                                               |
+                                                               +-> o celular do garçom bipa e vibra
+```
+
+A cozinha avança o pedido com um toque em cada etapa, no tablet da bancada de montagem. O garçom recebe os pedidos prontos no celular e marca a entrega ali (a cozinha também pode marcar no tablet). Um cancelamento de pedido já iniciado vira alerta nas telas de quem tem algo a interromper.
+
+### Board (tablet deitado na montagem)
+
+- **Três colunas na ordem da linha de produção**, e cada coluna na ordem de chegada: o pedido que espera há mais tempo fica em cima, e o "último a chegar sai antes" deixa de acontecer por descuido.
+- **Um botão grande por card, e não o card inteiro tocável:** um esbarrão com a mão suja não avança o pedido. O toque vale na hora, sem confirmação, e a barra de desfazer embaixo dá 5 segundos para voltar atrás, porque um diálogo de confirmação no pico é o "ficar clicando" que o Seu Jorge não quer.
+- **Alertas acima das colunas:** o cancelamento, em vermelho, com alarme, até alguém tocar em Ciente, e o aviso de "Reconectando" quando a rede cai. Só eles tomam o topo da tela, porque pedem atenção imediata; o resto da tela não se mexe.
+- **Barra superior com o que muda pouco:** a casa, o filtro por estação (a chapa e a fritadeira veem só os seus itens), o estado da conexão e a hora.
+- **A cor forte fica para o que pede ação:** botões e alertas. Cabeçalhos de coluna usam um tom suave; assim o olho vai primeiro ao atraso e ao botão.
+
+### O card do pedido
+
+A ordem é a de leitura de longe, do que decide mais ao que decide menos:
+
+1. **Número e origem** ("Mesa 9", "iFood"): quem é e para onde vai, salão ou entrega.
+2. **Tempo de espera**, com a faixa em cor, ícone e texto (atenção a partir de 8 minutos, atrasado a partir de 15) e uma faixa na lateral do card, que destaca os atrasados na coluna sem precisar ler o número.
+3. **Tamanho:** quantidade de itens e o selo "Grande", que separa a coca dos quatro combos.
+4. **Itens, com os modificadores logo abaixo de cada um**, em destaque e com ícone de remover, adicionar ou observação: "sem cebola" fica colado ao lanche a que pertence. Itens iguais aparecem somados.
+5. **A ação**, por último e na largura toda.
+
+A caixa alta é reservada aos alertas (ATRASADO, CANCELADO, COBRAR), para que eles se destaquem do resto.
+
+### Expedição (celular do garçom, em pé)
+
+- **Só os pedidos prontos**, do que está no balcão há mais tempo ao mais novo: o primeiro é o lanche que está esfriando.
+- **O tempo conta desde que ficou pronto**, e não desde a criação: é esse o tempo que importa no balcão.
+- **COBRAR** em destaque no pedido não pago, para ninguém entregar sem receber.
+- **Itens resumidos, sem modificadores:** o garçom confere a sacola, não monta o lanche.
+- **Só os cancelamentos de pedidos prontos** ("NÃO ENTREGAR"); cancelar algo em preparo é assunto da cozinha.
+
+### Painel da TV (somente leitura)
+
+A mesma fila do board, vista de longe por todos, **sem botões, filtro nem desfazer**: na TV ninguém toca. Pelo mesmo motivo, **sem alerta de cancelamento**: ninguém tocaria em Ciente, e o alerta ficaria na tela para sempre. Quem trata o cancelamento é o tablet.
+
 ## Como rodar
 
 ### Pré-requisitos

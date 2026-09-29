@@ -48,7 +48,8 @@ object OrderReducer {
      * servidor por motivo desconhecido e é removido sem alerta.
      */
     private fun reconcileSnapshot(state: KitchenState, snapshot: List<Order>): KitchenState {
-        val applied = snapshot.fold(state, ::applyServerOrder)
+        val folded = snapshot.fold(state, ::applyServerOrder)
+        val applied = if (folded.hasSnapshot) folded else folded.copy(hasSnapshot = true)
         val presentIds = snapshot.mapTo(HashSet()) { it.id }
         return applied.orders.keys
             .filterNot { it in presentIds }

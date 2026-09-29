@@ -38,7 +38,7 @@ Peso definido por quanto a dor custa (cliente perdido, retrabalho, prejuízo) e 
 |---|---|
 | Reconexão automática com backoff quando a rede cai | `ReconnectingOrderStream` com `BackoffPolicy` (1 a 30 s, com jitter) e `NetworkMonitor`; heartbeat `: ping` no mock. Testes: `ReconnectingOrderStreamTest`, `BackoffPolicyTest` |
 | Evento repetido ou fora de ordem não duplica nem regride o pedido | `version` no mock e `OrderReducer` que só aplica versão maior. Testes: `OrderReducerTest` (evento duplicado, fora de ordem, eco do PATCH), `ReconnectionTest` |
-| Fluido no pico: centenas de pedidos ativos e evento a cada 300 ms | `LazyColumn` com key e contentType (`BoardScreen`), mapeamento fora da thread principal (`BoardViewModel`), relógio único que recompõe só o timer (`KitchenClock`), coleções imutáveis. Sem teste de carga automatizado |
+| Fluido no pico: centenas de pedidos ativos e evento a cada 300 ms | `LazyColumn` com key e contentType (`BoardScreen`), mapeamento fora da thread principal (`BoardViewModel`), relógio único que recompõe só o timer (`KitchenClock`), coleções imutáveis. Medido em 29/09 no emulador, build debug, 60 s com rolagens (`dumpsys gfxinfo`): com 297 a 432 pedidos ativos e um novo a cada 0,3 s, 24,9% de quadros lentos e p99 de 53 ms, iguais ao board com 5 pedidos (24,9% e 85 ms). A carga não piora a fluidez; o valor absoluto reflete o emulador e o build debug, e o número de produção precisa ser medido num tablet com build release. Sem teste de carga automatizado |
 | Sem tela branca nem erro cru: mantém o último estado com aviso "Reconectando" | O `OrderStore` mantém o estado durante a queda; `ConnectionBanner` avisa. Testes: `ConnectionBannerTest`, `ReconnectionTest` |
 | Ciclo de vida modelado numa máquina de estados, transição inválida rejeitada | `StageMachine` no app; tabela de transições e 409 no mock; `RemoteOrderCommands` traduz o 409. Testes: `StageMachineTest`, `RemoteOrderCommandsTest`, `OptimisticTransitionTest` |
 | Alvos de toque grandes, legível a distância, estado com cor, ícone e texto | Tokens do `core/designsystem` (toque mínimo de 64 dp, botão de 72 dp, tipografia para 2 m), `WaitTimer` e `StageVisuals` com cor, ícone e texto. Testes: `KdsColorsContrastTest`, `OrderCardTest` |
@@ -66,3 +66,4 @@ Peso definido por quanto a dor custa (cliente perdido, retrabalho, prejuízo) e 
 - Priorização automática delivery vs salão: é decisão do dono, não do sistema.
 - Pronto por item ou por estação: o back só tem etapa por pedido.
 - Métricas de tempo médio e fila offline de ações.
+- Build release com R8 e medição de fluidez num tablet físico: ligar o R8 exige regras de keep para Hilt, serialization e Retrofit, e um erro nelas quebra o app só no release.

@@ -5,6 +5,7 @@ import io.github.gabrielevanger.kds.core.designsystem.component.StageTone
 import io.github.gabrielevanger.kds.core.domain.kitchen.CancellationAlert
 import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenOrder
 import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenState
+import io.github.gabrielevanger.kds.core.domain.kitchen.StoreNotice
 import io.github.gabrielevanger.kds.core.domain.model.Modifier
 import io.github.gabrielevanger.kds.core.domain.model.Order
 import io.github.gabrielevanger.kds.core.domain.model.OrderItem
@@ -80,6 +81,20 @@ internal object BoardUiMapper {
         tableNumber = alert.order.table,
         previousTone = alert.previousStage.toTone() ?: StageTone.PREPARING,
     )
+
+    /**
+     * Traduz um aviso do store usando o estado do momento. Pedido que já saiu da tela (cancelado
+     * ou entregue nesse meio tempo) não gera aviso: o card não existe mais para o aviso se referir.
+     */
+    fun mapNotice(notice: StoreNotice, state: KitchenState): BoardNotice? {
+        val (orderId, kind) = when (notice) {
+            is StoreNotice.TransitionNotSent -> notice.orderId to BoardNotice.Kind.NOT_SENT
+            is StoreNotice.TransitionRejected -> notice.orderId to BoardNotice.Kind.REJECTED
+        }
+        val order = state.orders[orderId] ?: return null
+        val currentTone = (state.pending[orderId]?.to ?: order.stage).toTone() ?: return null
+        return BoardNotice(kind, order.reference, currentTone)
+    }
 
     /** O mapa de pendências preserva a ordem de inserção: o último que ainda cabe desfazer é o mais recente. */
     private fun latestUndoable(state: KitchenState): UndoUi? {

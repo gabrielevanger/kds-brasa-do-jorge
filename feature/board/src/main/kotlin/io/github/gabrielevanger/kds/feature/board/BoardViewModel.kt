@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.gabrielevanger.kds.core.domain.kitchen.OrderStore
-import io.github.gabrielevanger.kds.core.domain.kitchen.StoreNotice
 import io.github.gabrielevanger.kds.core.domain.model.OrderId
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -14,6 +13,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 
 @HiltViewModel
@@ -26,7 +26,8 @@ class BoardViewModel @Inject constructor(private val store: OrderStore) : ViewMo
         .flowOn(Dispatchers.Default)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_SHARING_AFTER_MILLIS), BoardUiState.Initial)
 
-    val notices: Flow<StoreNotice> = store.notices
+    /** Avisos pontuais já com o número do pedido e a etapa em que o card ficou. */
+    val notices: Flow<BoardNotice> = store.notices.mapNotNull { BoardUiMapper.mapNotice(it, store.state.value) }
 
     fun onAdvance(orderId: OrderId) = store.advance(orderId)
 

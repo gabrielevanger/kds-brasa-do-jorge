@@ -5,6 +5,7 @@ import io.github.gabrielevanger.kds.core.designsystem.component.StageTone
 import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenEvent
 import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenState
 import io.github.gabrielevanger.kds.core.domain.kitchen.OrderReducer
+import io.github.gabrielevanger.kds.core.domain.kitchen.StoreNotice
 import io.github.gabrielevanger.kds.core.domain.model.Modifier
 import io.github.gabrielevanger.kds.core.domain.model.Order
 import io.github.gabrielevanger.kds.core.domain.model.OrderId
@@ -151,6 +152,33 @@ class BoardUiMapperTest {
             ),
             modifiers,
         )
+    }
+
+    @Nested
+    inner class `Avisos de envio` {
+
+        @Test
+        fun `falha de envio informa o pedido e a etapa para onde o card voltou`() {
+            val state = stateOf(anOrder(id = 5, stage = Stage.PENDING))
+
+            val notice = BoardUiMapper.mapNotice(StoreNotice.TransitionNotSent(OrderId(5)), state)
+
+            assertEquals(BoardNotice(BoardNotice.Kind.NOT_SENT, "#0005", StageTone.QUEUED), notice)
+        }
+
+        @Test
+        fun `rejeicao informa a etapa real do pedido no servidor`() {
+            val state = stateOf(anOrder(id = 5, stage = Stage.READY, version = 3))
+
+            val notice = BoardUiMapper.mapNotice(StoreNotice.TransitionRejected(OrderId(5)), state)
+
+            assertEquals(BoardNotice(BoardNotice.Kind.REJECTED, "#0005", StageTone.READY), notice)
+        }
+
+        @Test
+        fun `pedido que ja saiu da tela nao gera aviso`() {
+            assertNull(BoardUiMapper.mapNotice(StoreNotice.TransitionNotSent(OrderId(99)), KitchenState()))
+        }
     }
 
     @Nested

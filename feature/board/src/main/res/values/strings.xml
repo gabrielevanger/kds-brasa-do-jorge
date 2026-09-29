@@ -29,4 +29,9 @@
     <string name="board_large_order">GRANDE</string>
     <string name="board_item_quantity">%1$d×</string>
     <string name="board_empty_column">Nenhum pedido</string>
+
+    <string name="board_undo_message">%1$s foi para %2$s</string>
+    <string name="board_undo_action">DESFAZER</string>
+    <string name="board_notice_not_sent">%1$s não foi enviado: sem conexão. Voltou para %2$s.</string>
+    <string name="board_notice_rejected">%1$s foi alterado em outro aparelho. Agora está em %2$s.</string>
 </resources>

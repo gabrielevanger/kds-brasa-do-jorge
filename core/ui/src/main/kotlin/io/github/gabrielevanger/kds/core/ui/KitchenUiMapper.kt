@@ -21,6 +21,18 @@ object KitchenUiMapper {
     private const val GROUP_REMOVE = "Remover"
     private const val GROUP_ADD = "Adicionais"
 
+    /**
+     * Itens do card. O servidor pode mandar o mesmo item em linhas separadas ("2× Onion Rings",
+     * "1× Onion Rings"): linhas com o mesmo nome, os mesmos modificadores e a mesma observação viram
+     * uma só, com a quantidade somada, na ordem da primeira aparição. Qualquer diferença mantém a
+     * linha separada, para nenhum modificador se perder.
+     */
+    fun toItems(items: List<OrderItem>): ImmutableList<OrderItemUi> = items
+        .groupBy { Triple(it.name, it.modifiers, it.note) }
+        .values
+        .map { same -> toItem(same.first()).copy(quantity = same.sumOf { it.quantity }) }
+        .toImmutableList()
+
     fun toItem(item: OrderItem) = OrderItemUi(
         key = item.id,
         quantity = item.quantity,

@@ -102,6 +102,22 @@ class BoardUiMapperTest {
         }
 
         @Test
+        fun `card agrupa linhas iguais da estacao filtrada`() {
+            val repeated = anOrder(
+                id = 3,
+                items = listOf(
+                    anItem(name = "Onion Rings", quantity = 2, productionArea = ProductionArea.FRITADEIRA, id = "a"),
+                    anItem(name = "Smash Bacon", productionArea = ProductionArea.CHAPA, id = "b"),
+                    anItem(name = "Onion Rings", quantity = 1, productionArea = ProductionArea.FRITADEIRA, id = "c"),
+                ),
+            )
+
+            val card = map(stateOf(repeated), StationFilter.FRITADEIRA).column(StageTone.QUEUED).single()
+
+            assertEquals(listOf("Onion Rings" to 3), card.items.map { it.name to it.quantity })
+        }
+
+        @Test
         fun `sem filtro o pedido aparece inteiro`() {
             val card = map(stateOf(combo)).column(StageTone.QUEUED).single()
 

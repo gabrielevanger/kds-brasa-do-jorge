@@ -4,7 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -49,39 +49,16 @@ private fun CancellationAlert(alert: CancellationAlertUi, onDismiss: () -> Unit)
     val colors = KdsTheme.colors
     val spacing = KdsTheme.spacing
     val typography = KdsTheme.typography
-    Row(
+    MessageWithAction(
         modifier = Modifier
             .fillMaxWidth()
             .background(colors.canceled, KdsTheme.shapes.card)
             .padding(horizontal = spacing.m, vertical = spacing.s)
             .testTag(CancellationAlertTags.ALERT),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(spacing.m),
-    ) {
-        Icon(
-            painter = painterResource(DesignR.drawable.ic_canceled),
-            contentDescription = null,
-            tint = colors.onCanceled,
-            modifier = Modifier.size(KdsTheme.sizes.iconL),
-        )
-        Column(modifier = Modifier.weight(EQUAL_SHARE), verticalArrangement = Arrangement.spacedBy(spacing.xxs)) {
-            Text(
-                text = stringResource(R.string.kitchen_alert_title, alert.reference),
-                style = typography.columnTitle,
-                color = colors.onCanceled,
-            )
-            Text(
-                text = stringResource(
-                    R.string.kitchen_alert_context,
-                    alert.previousTone.title(),
-                    alert.origin.text(alert.tableNumber),
-                ),
-                style = typography.label,
-                color = colors.onCanceled,
-            )
-            Text(text = itemsSummary(alert.items), style = typography.body, color = colors.onCanceled)
-        }
-        Box(modifier = Modifier.width(KdsTheme.sizes.secondaryActionWidth)) {
+        message = {
+            AlertMessage(alert)
+        },
+        action = {
             KitchenActionButton(
                 icon = DesignR.drawable.ic_action_ready,
                 text = stringResource(R.string.kitchen_alert_dismiss),
@@ -89,7 +66,37 @@ private fun CancellationAlert(alert: CancellationAlertUi, onDismiss: () -> Unit)
                 contentColor = colors.canceled,
                 onClick = onDismiss,
             )
-        }
+        },
+    )
+}
+
+@Composable
+private fun RowScope.AlertMessage(alert: CancellationAlertUi) {
+    val colors = KdsTheme.colors
+    val spacing = KdsTheme.spacing
+    val typography = KdsTheme.typography
+    Icon(
+        painter = painterResource(DesignR.drawable.ic_canceled),
+        contentDescription = null,
+        tint = colors.onCanceled,
+        modifier = Modifier.size(KdsTheme.sizes.iconL),
+    )
+    Column(modifier = Modifier.weight(EQUAL_SHARE), verticalArrangement = Arrangement.spacedBy(spacing.xxs)) {
+        Text(
+            text = stringResource(R.string.kitchen_alert_title, alert.reference),
+            style = typography.columnTitle,
+            color = colors.onCanceled,
+        )
+        Text(
+            text = stringResource(
+                R.string.kitchen_alert_context,
+                alert.previousTone.title(),
+                alert.origin.text(alert.tableNumber),
+            ),
+            style = typography.label,
+            color = colors.onCanceled,
+        )
+        Text(text = itemsSummary(alert.items), style = typography.body, color = colors.onCanceled)
     }
 }
 

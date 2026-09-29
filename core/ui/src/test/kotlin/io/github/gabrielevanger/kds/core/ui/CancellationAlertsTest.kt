@@ -3,11 +3,13 @@ package io.github.gabrielevanger.kds.core.ui
 import android.content.Context
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.unit.DpRect
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.gabrielevanger.kds.core.designsystem.component.StageTone
@@ -16,9 +18,11 @@ import io.github.gabrielevanger.kds.core.domain.model.OrderId
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
 class CancellationAlertsTest {
@@ -89,6 +93,32 @@ class CancellationAlertsTest {
         show(persistentListOf(alert(9), alert(12), alert(15)))
 
         composeRule.onAllNodesWithTag(CancellationAlertTags.ALERT).assertCountEquals(3)
+    }
+
+    /** No celular em pé, o botão ao lado espremeria o texto até ele sumir. */
+    @Test
+    fun noCelularCienteFicaAbaixoDoTexto() {
+        show(persistentListOf(alert(9)))
+
+        val (title, button) = titleAndButtonBounds()
+
+        assertTrue(button.top >= title.bottom)
+    }
+
+    @Test
+    @Config(qualifiers = TABLET_QUALIFIERS)
+    fun noTabletCienteFicaAoLadoDoTexto() {
+        show(persistentListOf(alert(9)))
+
+        val (title, button) = titleAndButtonBounds()
+
+        assertTrue(button.left >= title.right)
+    }
+
+    private fun titleAndButtonBounds(): Pair<DpRect, DpRect> {
+        val title = composeRule.onNodeWithText(context.getString(R.string.kitchen_alert_title, "#0009"))
+        val button = composeRule.onNodeWithText(context.getString(R.string.kitchen_alert_dismiss))
+        return title.getUnclippedBoundsInRoot() to button.getUnclippedBoundsInRoot()
     }
 
     @Test

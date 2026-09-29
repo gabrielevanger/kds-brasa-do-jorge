@@ -2,19 +2,23 @@ package io.github.gabrielevanger.kds.core.ui
 
 import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.unit.DpRect
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.gabrielevanger.kds.core.designsystem.component.StageTone
 import io.github.gabrielevanger.kds.core.designsystem.theme.KdsTheme
 import io.github.gabrielevanger.kds.core.domain.model.OrderId
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
 class FeedbackBarTest {
@@ -54,6 +58,36 @@ class FeedbackBarTest {
         composeRule.onNodeWithText(context.getString(R.string.kitchen_undo_action)).performClick()
 
         assertEquals(listOf(undo), undone)
+    }
+
+    @Test
+    fun noCelularDesfazerFicaAbaixoDaMensagem() {
+        show(notice = null, undo = undo)
+
+        val (message, button) = messageAndButtonBounds()
+
+        assertTrue(button.top >= message.bottom)
+    }
+
+    @Test
+    @Config(qualifiers = TABLET_QUALIFIERS)
+    fun noTabletDesfazerFicaAoLadoDaMensagem() {
+        show(notice = null, undo = undo)
+
+        val (message, button) = messageAndButtonBounds()
+
+        assertTrue(button.left >= message.right)
+    }
+
+    private fun messageAndButtonBounds(): Pair<DpRect, DpRect> {
+        val text = context.getString(
+            R.string.kitchen_undo_message,
+            "#0005",
+            stageTitle(R.string.kitchen_stage_preparing),
+        )
+        val message = composeRule.onNodeWithText(text)
+        val button = composeRule.onNodeWithText(context.getString(R.string.kitchen_undo_action))
+        return message.getUnclippedBoundsInRoot() to button.getUnclippedBoundsInRoot()
     }
 
     @Test

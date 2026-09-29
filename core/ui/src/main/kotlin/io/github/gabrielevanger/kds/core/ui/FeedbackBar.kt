@@ -42,22 +42,21 @@ fun FeedbackBar(notice: KitchenNotice?, undo: UndoUi?, onUndo: (UndoUi) -> Unit,
 private fun UndoBar(undo: UndoUi, onUndo: () -> Unit, modifier: Modifier) {
     val colors = KdsTheme.colors
     val spacing = KdsTheme.spacing
-    Row(
+    MessageWithAction(
         modifier = modifier
             .fillMaxWidth()
             .background(colors.surfaceRaised, KdsTheme.shapes.card)
             .padding(horizontal = spacing.m, vertical = spacing.xs)
             .testTag(FeedbackBarTags.UNDO),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(spacing.m),
-    ) {
-        Text(
-            text = stringResource(R.string.kitchen_undo_message, undo.reference, undo.targetTone.title()),
-            style = KdsTheme.typography.itemName,
-            color = colors.onSurface,
-            modifier = Modifier.weight(EQUAL_SHARE),
-        )
-        Box(modifier = Modifier.width(KdsTheme.sizes.secondaryActionWidth)) {
+        message = {
+            Text(
+                text = stringResource(R.string.kitchen_undo_message, undo.reference, undo.targetTone.title()),
+                style = KdsTheme.typography.itemName,
+                color = colors.onSurface,
+                modifier = Modifier.weight(EQUAL_SHARE),
+            )
+        },
+        action = {
             KitchenActionButton(
                 icon = DesignR.drawable.ic_undo,
                 text = stringResource(R.string.kitchen_undo_action),
@@ -65,8 +64,8 @@ private fun UndoBar(undo: UndoUi, onUndo: () -> Unit, modifier: Modifier) {
                 contentColor = colors.background,
                 onClick = onUndo,
             )
-        }
-    }
+        },
+    )
 }
 
 @Composable

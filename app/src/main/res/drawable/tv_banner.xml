@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Banner do launcher da TV (320x180 dp, exigido para apps em Android TV): o próprio ícone do app
+     no centro, sobre o fundo da marca. Camadas em vez de um vetor único: vetor acima de 200 dp é
+     lento de desenhar. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:width="320dp"
+        android:height="180dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/ic_launcher_background" />
+        </shape>
+    </item>
+    <item
+        android:width="180dp"
+        android:height="180dp"
+        android:drawable="@drawable/ic_launcher_foreground"
+        android:gravity="center" />
+</layer-list>

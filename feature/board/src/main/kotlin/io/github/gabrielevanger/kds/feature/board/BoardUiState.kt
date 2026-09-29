@@ -79,6 +79,8 @@ data class CancellationAlertUi(
     val origin: OriginLabel,
     val tableNumber: Int?,
     val previousTone: StageTone,
+    /** O card saiu do board: o alerta precisa dizer o que parar de fazer. */
+    val items: ImmutableList<OrderItemUi>,
 )
 
 /** Toque mais recente que ainda pode ser desfeito. */

@@ -13,6 +13,7 @@ import io.github.gabrielevanger.kds.core.domain.model.Origin
 import io.github.gabrielevanger.kds.core.domain.model.ProductionArea
 import io.github.gabrielevanger.kds.core.domain.model.Stage
 import io.github.gabrielevanger.kds.core.domain.sync.ConnectionState
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
 /** Traduz o estado da cozinha para o que o board desenha. Função pura, testável sem Android. */
@@ -80,7 +81,27 @@ internal object BoardUiMapper {
         origin = alert.order.originLabel(),
         tableNumber = alert.order.table,
         previousTone = alert.previousStage.toTone() ?: StageTone.PREPARING,
+        items = summarizeByName(alert.order.items),
     )
+
+    /**
+     * No alerta não há modificadores: itens iguais em linhas separadas viram uma linha só
+     * ("3× Smash Bacon"), na ordem em que aparecem no pedido.
+     */
+    private fun summarizeByName(items: List<OrderItem>) = items
+        .groupBy { it.name }
+        .map { (name, sameName) ->
+            OrderItemUi(
+                key = name,
+                quantity = sameName.sumOf {
+                    it.quantity
+                },
+                name = name,
+                modifiers = persistentListOf(),
+                note = null,
+            )
+        }
+        .toImmutableList()
 
     /**
      * Traduz um aviso do store usando o estado do momento. Pedido que já saiu da tela (cancelado

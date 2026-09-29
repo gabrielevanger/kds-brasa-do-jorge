@@ -154,6 +154,26 @@ class BoardUiMapperTest {
         )
     }
 
+    @Test
+    fun `alerta agrupa itens iguais que o servidor envia em linhas separadas`() {
+        val order = anOrder(
+            id = 1,
+            stage = Stage.PREPARING,
+            version = 2,
+            items = listOf(
+                anItem(name = "Smash Bacon", quantity = 1),
+                anItem(name = "Milkshake Ovomaltine", quantity = 1),
+                anItem(name = "Smash Bacon", quantity = 2),
+            ),
+        )
+        val state =
+            stateOf(order, events = listOf(KitchenEvent.OrderReceived(order.copy(stage = Stage.CANCELED, version = 3))))
+
+        val items = map(state).cancellationAlerts.single().items
+
+        assertEquals(listOf("Smash Bacon" to 3, "Milkshake Ovomaltine" to 1), items.map { it.name to it.quantity })
+    }
+
     @Nested
     inner class `Avisos de envio` {
 
@@ -219,6 +239,7 @@ class BoardUiMapperTest {
 
             assertEquals(OrderId(1), alert.id)
             assertEquals(StageTone.PREPARING, alert.previousTone)
+            assertEquals(listOf("Smash Clássico"), alert.items.map { it.name })
             assertTrue(map(state).columns.all { it.orders.isEmpty() })
         }
     }

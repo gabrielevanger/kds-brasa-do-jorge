@@ -46,7 +46,9 @@ import kotlinx.coroutines.flow.collectLatest
 
 /** Tags usadas pelos testes de interface para localizar as listas de cada coluna. */
 object BoardTags {
-    fun column(tone: StageTone): String = "board_column_" + tone.name
+    private const val COLUMN_PREFIX = "board_column_"
+
+    fun column(tone: StageTone): String = COLUMN_PREFIX + tone.name
 }
 
 @Composable
@@ -59,6 +61,7 @@ fun BoardRoute(viewModel: BoardViewModel = hiltViewModel()) {
             notice = notice,
             onAdvance = viewModel::onAdvance,
             onUndo = { undo -> viewModel.onUndo(undo.orderId) },
+            onDismissAlert = viewModel::onDismissAlert,
             onStationFilterSelected = viewModel::onStationFilterSelected,
         )
     }
@@ -88,6 +91,7 @@ fun BoardScreen(
     notice: BoardNotice?,
     onAdvance: (OrderId) -> Unit,
     onUndo: (UndoUi) -> Unit,
+    onDismissAlert: (OrderId) -> Unit,
     onStationFilterSelected: (StationFilter) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -100,6 +104,7 @@ fun BoardScreen(
             .padding(spacing.s),
         verticalArrangement = Arrangement.spacedBy(spacing.s),
     ) {
+        CancellationAlerts(alerts = state.cancellationAlerts, onDismiss = onDismissAlert)
         StationFilterRow(selected = state.stationFilter, onSelected = onStationFilterSelected)
         Row(modifier = Modifier.weight(EQUAL_SHARE), horizontalArrangement = Arrangement.spacedBy(spacing.s)) {
             state.columns.forEach { column ->

@@ -64,6 +64,7 @@ class BoardColumnScrollTest {
                         notice = null,
                         onAdvance = {},
                         onUndo = {},
+                        onDismissAlert = {},
                         onStationFilterSelected = {},
                     )
                 }

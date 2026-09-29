@@ -15,7 +15,7 @@ import io.github.gabrielevanger.kds.core.domain.model.isTerminal
 object OrderReducer {
 
     fun reduce(state: KitchenState, event: KitchenEvent): KitchenState = when (event) {
-        is KitchenEvent.SnapshotReceived -> event.orders.fold(state, ::applyServerOrder)
+        is KitchenEvent.SnapshotReceived -> reconcileSnapshot(state, event.orders)
 
         is KitchenEvent.OrderReceived -> applyServerOrder(state, event.order)
 
@@ -39,6 +39,22 @@ object OrderReducer {
             applyServerOrder(state, event.currentOrder).withoutPending(event.currentOrder.id)
 
         is KitchenEvent.TransitionFailed -> state.withoutPending(event.orderId)
+    }
+
+    /**
+     * O snapshot chega a cada conexão e é a verdade do servidor naquele momento. Cada pedido passa
+     * pela mesma regra de version, então cancelamentos ocorridos durante a queda geram alerta e
+     * transições pendentes ainda válidas são mantidas. Pedido ativo ausente do snapshot saiu do
+     * servidor por motivo desconhecido e é removido sem alerta.
+     */
+    private fun reconcileSnapshot(state: KitchenState, snapshot: List<Order>): KitchenState {
+        val applied = snapshot.fold(state, ::applyServerOrder)
+        val presentIds = snapshot.mapTo(HashSet()) { it.id }
+        return applied.orders.keys
+            .filterNot { it in presentIds }
+            .fold(applied) { current, absentId ->
+                current.copy(orders = current.orders.remove(absentId)).withoutPending(absentId)
+            }
     }
 
     /** Toque duplo, pedido desconhecido ou etapa final não geram nova transição. */

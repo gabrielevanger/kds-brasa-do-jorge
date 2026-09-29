@@ -192,6 +192,6 @@ class OrderReducerTest {
             OrderReceived(anOrder(id = 1, createdAt = BASE_TIME)),
         )
 
-        assertEquals(listOf(1L, 2L, 3L), state.ordersByArrival().map { it.id.value })
+        assertEquals(listOf(1L, 2L, 3L), state.ordersByArrival().map { it.order.id.value })
     }
 }

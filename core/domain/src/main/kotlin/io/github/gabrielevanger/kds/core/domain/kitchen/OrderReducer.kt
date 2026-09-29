@@ -1,7 +1,10 @@
 package io.github.gabrielevanger.kds.core.domain.kitchen
 
+import io.github.gabrielevanger.kds.core.domain.kitchen.PendingTransition.Phase
 import io.github.gabrielevanger.kds.core.domain.model.Order
+import io.github.gabrielevanger.kds.core.domain.model.OrderId
 import io.github.gabrielevanger.kds.core.domain.model.Stage
+import io.github.gabrielevanger.kds.core.domain.model.StageMachine
 import io.github.gabrielevanger.kds.core.domain.model.isInProgress
 import io.github.gabrielevanger.kds.core.domain.model.isTerminal
 
@@ -19,6 +22,33 @@ object OrderReducer {
         is KitchenEvent.CancellationAlertDismissed -> state.copy(
             cancellationAlerts = state.cancellationAlerts.remove(event.orderId),
         )
+
+        is KitchenEvent.TransitionRequested -> requestTransition(state, event.orderId)
+
+        is KitchenEvent.TransitionUndone -> state.updatePending(event.orderId) { pending ->
+            if (pending.canUndo) null else pending
+        }
+
+        is KitchenEvent.TransitionSent -> state.updatePending(event.orderId) { pending ->
+            pending.copy(phase = Phase.IN_FLIGHT)
+        }
+
+        is KitchenEvent.TransitionConfirmed -> applyServerOrder(state, event.order).withoutPending(event.order.id)
+
+        is KitchenEvent.TransitionRejected ->
+            applyServerOrder(state, event.currentOrder).withoutPending(event.currentOrder.id)
+
+        is KitchenEvent.TransitionFailed -> state.withoutPending(event.orderId)
+    }
+
+    /** Toque duplo, pedido desconhecido ou etapa final não geram nova transição. */
+    private fun requestTransition(state: KitchenState, orderId: OrderId): KitchenState {
+        if (orderId in state.pending) return state
+        val order = state.orders[orderId] ?: return state
+        val next = StageMachine.nextStage(order.stage) ?: return state
+        return state.copy(
+            pending = state.pending.put(orderId, PendingTransition(from = order.stage, to = next, Phase.WAITING)),
+        )
     }
 
     /**
@@ -32,15 +62,18 @@ object OrderReducer {
 
         if (incoming.version <= known.version) return state
 
-        return when (incoming.stage) {
-            Stage.CANCELED -> cancel(state, incoming, previousStage = known.stage)
+        val updated = when (incoming.stage) {
+            Stage.CANCELED -> cancel(state, incoming, previousStage = state.displayedStage(known))
             Stage.DONE -> state.copy(orders = state.orders.remove(incoming.id))
             else -> state.withOrder(incoming)
         }
+        return updated.reconcilePending(incoming.id)
     }
 
-    private fun KitchenState.withOrder(order: Order): KitchenState = copy(orders = orders.put(order.id, order))
-
+    /**
+     * O alerta considera a etapa que a cozinha está vendo: se alguém já tocou em "preparar",
+     * para quem está na chapa o pedido começou, mesmo que o servidor ainda não saiba.
+     */
     private fun cancel(state: KitchenState, canceled: Order, previousStage: Stage): KitchenState {
         val alerts = if (previousStage.isInProgress) {
             state.cancellationAlerts.put(canceled.id, CancellationAlert(canceled, previousStage))
@@ -51,5 +84,35 @@ object OrderReducer {
             orders = state.orders.remove(canceled.id),
             cancellationAlerts = alerts,
         )
+    }
+
+    /**
+     * Uma transição pendente só continua válida enquanto o servidor estiver na etapa de onde ela partiu.
+     * Isso cobre o eco da própria requisição, a mudança feita por outro aparelho e o pedido que saiu do estado.
+     */
+    private fun KitchenState.reconcilePending(orderId: OrderId): KitchenState {
+        val pendingTransition = pending[orderId] ?: return this
+        val serverStage = orders[orderId]?.stage
+        return if (serverStage == pendingTransition.from) this else withoutPending(orderId)
+    }
+
+    private fun KitchenState.displayedStage(order: Order): Stage = pending[order.id]?.to ?: order.stage
+
+    private fun KitchenState.withOrder(order: Order): KitchenState = copy(orders = orders.put(order.id, order))
+
+    private fun KitchenState.withoutPending(orderId: OrderId): KitchenState =
+        if (orderId in pending) copy(pending = pending.remove(orderId)) else this
+
+    private fun KitchenState.updatePending(
+        orderId: OrderId,
+        transform: (PendingTransition) -> PendingTransition?,
+    ): KitchenState {
+        val current = pending[orderId] ?: return this
+        val updated = transform(current)
+        return when {
+            updated == current -> this
+            updated == null -> copy(pending = pending.remove(orderId))
+            else -> copy(pending = pending.put(orderId, updated))
+        }
     }
 }

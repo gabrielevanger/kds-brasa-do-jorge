@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="kitchen_brand">BRASA DO JORGE</string>
+    <string name="kitchen_status_live">AO VIVO</string>
+    <string name="kitchen_status_connecting">CONECTANDO</string>
+    <string name="kitchen_status_offline">SEM CONEXÃO</string>
+
     <string name="kitchen_stage_queued">NA FILA</string>
     <string name="kitchen_stage_preparing">PREPARANDO</string>
     <string name="kitchen_stage_ready">PRONTO</string>

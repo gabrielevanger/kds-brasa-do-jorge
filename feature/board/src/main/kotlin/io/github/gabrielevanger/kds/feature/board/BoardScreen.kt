@@ -39,6 +39,7 @@ import io.github.gabrielevanger.kds.core.ui.FeedbackBar
 import io.github.gabrielevanger.kds.core.ui.KitchenClockProvider
 import io.github.gabrielevanger.kds.core.ui.KitchenNotice
 import io.github.gabrielevanger.kds.core.ui.KitchenSoundEffect
+import io.github.gabrielevanger.kds.core.ui.KitchenTopBar
 import io.github.gabrielevanger.kds.core.ui.UndoUi
 import io.github.gabrielevanger.kds.core.ui.rememberVisibleNotice
 import io.github.gabrielevanger.kds.core.ui.title
@@ -88,9 +89,11 @@ fun BoardScreen(
             .padding(spacing.s),
         verticalArrangement = Arrangement.spacedBy(spacing.s),
     ) {
+        KitchenTopBar(connection = state.connection) {
+            StationFilterRow(selected = state.stationFilter, onSelected = onStationFilterSelected)
+        }
         ConnectionBanner(connection = state.connection)
         CancellationAlerts(alerts = state.cancellationAlerts, onDismiss = onDismissAlert)
-        StationFilterRow(selected = state.stationFilter, onSelected = onStationFilterSelected)
         BoardColumns(columns = state.columns, onAdvance = onAdvance, modifier = Modifier.weight(EQUAL_SHARE))
         FeedbackBar(notice = notice, undo = state.undo, onUndo = onUndo)
     }

@@ -10,6 +10,29 @@ Android nativo em Kotlin com Jetpack Compose. Um único APK assume o papel do ap
 | Celular | Expedição: pedidos prontos e ENTREGUE | Garçom |
 | TV (Android TV ou Google TV) | Painel somente leitura | Todos, de longe |
 
+## Telas
+
+![Board no tablet: um pedido vai da fila para o preparo e outro do preparo para o pronto, com a barra de desfazer, enquanto novos pedidos chegam](docs/media/board.gif)
+
+<table>
+  <tr>
+    <td><img src="docs/media/board-escuro.png" alt="Board no tablet, tema escuro: modificadores em destaque, origem do pedido, selo GRANDE e faixa vermelha no pedido atrasado"></td>
+    <td><img src="docs/media/board-claro-cancelamento.png" alt="Board no tablet, tema claro, com o alerta de um pedido pronto cancelado: NÃO ENTREGAR e o botão CIENTE"></td>
+  </tr>
+  <tr>
+    <td align="center">Board no tablet, tema escuro</td>
+    <td align="center">Tema claro, com o alerta de cancelamento</td>
+  </tr>
+  <tr>
+    <td><img src="docs/media/painel-tv.png" alt="Painel somente leitura na TV, com a fila, os pedidos atrasados e a barra superior com a conexão e a hora"></td>
+    <td align="center"><img src="docs/media/expedicao-celular.png" width="260" alt="Expedição no celular: pedidos prontos do mais antigo ao mais novo, COBRAR no pedido não pago e o botão ENTREGUE"></td>
+  </tr>
+  <tr>
+    <td align="center">Painel na TV, somente leitura</td>
+    <td align="center">Expedição no celular do garçom</td>
+  </tr>
+</table>
+
 ## O que o app faz
 
 - **Tempo real por SSE**, com reconexão automática e aviso "Reconectando"; na queda, a tela mantém o último estado.
@@ -155,6 +178,7 @@ Ficaram de fora, por decisão:
 
 - Guardar os alertas de cancelamento e os envios agendados no aparelho, para sobreviverem a um reinício do app.
 - Fila offline de ações, reenviada quando a rede voltar.
+- Corrigir os timers pela diferença entre o relógio do servidor e o do aparelho: hoje, um aparelho com a hora errada mostra tempos errados.
 - Build release com R8 e medição de fluidez num tablet real.
 - Métricas de tempo médio por etapa, para o dono ver o gargalo.
 - Pronto por item e sincronização de estações, quando o back tiver esses dados.

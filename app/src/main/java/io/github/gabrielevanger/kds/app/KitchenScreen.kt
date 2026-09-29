@@ -9,14 +9,21 @@ enum class KitchenScreen {
 
     /** Celular do garçom. */
     EXPEDITION,
+
+    /** TV na parede da cozinha, somente leitura. */
+    TV_PANEL,
     ;
 
     companion object {
         /**
-         * Decide pela menor largura do aparelho, e não pela largura da janela: girar o celular não
-         * pode trocar a tela do garçom pelo board. O limite é o da faixa compacta do Material.
+         * A TV é reconhecida pelo modo de interface do sistema, e não pelo tamanho: um tablet grande
+         * não vira painel. Nos demais, decide a menor largura do aparelho, e não a da janela: girar o
+         * celular não pode trocar a tela do garçom pelo board. O limite é o da faixa compacta do Material.
          */
-        fun forDevice(smallestWidthDp: Int): KitchenScreen =
-            if (smallestWidthDp < WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND) EXPEDITION else BOARD
+        fun forDevice(smallestWidthDp: Int, isTelevision: Boolean): KitchenScreen = when {
+            isTelevision -> TV_PANEL
+            smallestWidthDp < WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND -> EXPEDITION
+            else -> BOARD
+        }
     }
 }

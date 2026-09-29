@@ -1,5 +1,6 @@
 package io.github.gabrielevanger.kds.app
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Window
 import android.view.WindowManager
@@ -14,6 +15,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.gabrielevanger.kds.core.designsystem.theme.KdsTheme
 import io.github.gabrielevanger.kds.feature.board.BoardRoute
+import io.github.gabrielevanger.kds.feature.board.TvPanelRoute
 import io.github.gabrielevanger.kds.feature.expedition.ExpeditionRoute
 
 @AndroidEntryPoint
@@ -22,13 +24,21 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             KdsTheme {
-                when (KitchenScreen.forDevice(LocalConfiguration.current.smallestScreenWidthDp)) {
+                val configuration = LocalConfiguration.current
+                val isTelevision =
+                    configuration.uiMode and Configuration.UI_MODE_TYPE_MASK == Configuration.UI_MODE_TYPE_TELEVISION
+                when (KitchenScreen.forDevice(configuration.smallestScreenWidthDp, isTelevision)) {
                     KitchenScreen.BOARD -> {
                         KitchenDisplayMode(window)
                         BoardRoute()
                     }
 
                     KitchenScreen.EXPEDITION -> ExpeditionRoute()
+
+                    KitchenScreen.TV_PANEL -> {
+                        KitchenDisplayMode(window)
+                        TvPanelRoute()
+                    }
                 }
             }
         }
@@ -36,7 +46,8 @@ class MainActivity : ComponentActivity() {
 }
 
 /**
- * No pico ninguém toca no tablet por minutos: a tela não pode apagar. As barras do sistema
+ * No pico ninguém toca no tablet por minutos, e na TV ninguém toca nunca: a tela não pode apagar
+ * nem entrar no descanso de tela. As barras do sistema
  * somem para ganhar espaço e evitar um "voltar" acidental; um deslize na borda as mostra.
  * O celular do garçom fica de fora: ele vive no bolso e usa o aparelho para outras coisas.
  */

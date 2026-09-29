@@ -10,6 +10,7 @@ import io.github.gabrielevanger.kds.core.domain.testing.anOrder
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class KitchenSignalsTest {
@@ -102,6 +103,62 @@ class KitchenSignalsTest {
         val canceled = anOrder(id = 1, stage = Stage.CANCELED, version = 2)
 
         assertEquals(emptySet<KitchenSignal>(), signalsAfter(loaded, OrderReceived(canceled)))
+    }
+
+    @Nested
+    inner class `Pedido pronto` {
+
+        private val ready = anOrder(id = 3, stage = Stage.READY, version = 3)
+        private val withReady = KitchenState().reduce(SnapshotReceived(listOf(queued, preparing, ready)))
+
+        @Test
+        fun `servidor confirmar o pedido como pronto avisa`() {
+            val confirmed = anOrder(id = 2, stage = Stage.READY, version = 3)
+
+            assertEquals(setOf(KitchenSignal.ORDER_READY), signalsAfter(loaded, OrderReceived(confirmed)))
+        }
+
+        @Test
+        fun `toque de pronto ainda nao confirmado nao avisa`() {
+            assertEquals(emptySet<KitchenSignal>(), signalsAfter(loaded, TransitionRequested(OrderId(2))))
+        }
+
+        @Test
+        fun `desfazer a entrega nao devolve o pedido ao balcao`() {
+            val delivering = withReady.reduce(TransitionRequested(OrderId(3)))
+
+            assertEquals(emptySet<KitchenSignal>(), signalsAfter(delivering, TransitionUndone(OrderId(3))))
+        }
+
+        @Test
+        fun `pedidos ja prontos ao abrir o app nao avisam`() {
+            assertEquals(emptySet<KitchenSignal>(), KitchenSignals.between(KitchenState(), withReady))
+        }
+
+        @Test
+        fun `evento repetido de pedido ja pronto nao avisa de novo`() {
+            assertEquals(emptySet<KitchenSignal>(), signalsAfter(withReady, OrderReceived(ready)))
+            assertEquals(emptySet<KitchenSignal>(), signalsAfter(withReady, OrderReceived(ready.copy(version = 4))))
+        }
+
+        @Test
+        fun `reconexao com pedido que ficou pronto na queda avisa`() {
+            val readyWhileOffline = preparing.copy(stage = Stage.READY, version = 3)
+
+            assertEquals(
+                setOf(KitchenSignal.ORDER_READY),
+                signalsAfter(loaded, SnapshotReceived(listOf(queued, readyWhileOffline))),
+            )
+        }
+
+        /** O garçom precisa buscar o lanche mesmo que a tela nunca o tenha visto em preparo. */
+        @Test
+        fun `pedido que chega ja pronto avisa pedido novo e pronto`() {
+            assertEquals(
+                setOf(KitchenSignal.NEW_ORDER, KitchenSignal.ORDER_READY),
+                signalsAfter(loaded, OrderReceived(anOrder(id = 4, stage = Stage.READY))),
+            )
+        }
     }
 
     @Test

@@ -5,6 +5,7 @@ import io.github.gabrielevanger.kds.core.designsystem.component.StageTone
 import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenEvent
 import io.github.gabrielevanger.kds.core.domain.kitchen.KitchenState
 import io.github.gabrielevanger.kds.core.domain.kitchen.OrderReducer
+import io.github.gabrielevanger.kds.core.domain.kitchen.StoreNotice
 import io.github.gabrielevanger.kds.core.domain.model.Modifier
 import io.github.gabrielevanger.kds.core.domain.model.Order
 import io.github.gabrielevanger.kds.core.domain.model.OrderId
@@ -153,6 +154,53 @@ class BoardUiMapperTest {
         )
     }
 
+    @Test
+    fun `alerta agrupa itens iguais que o servidor envia em linhas separadas`() {
+        val order = anOrder(
+            id = 1,
+            stage = Stage.PREPARING,
+            version = 2,
+            items = listOf(
+                anItem(name = "Smash Bacon", quantity = 1),
+                anItem(name = "Milkshake Ovomaltine", quantity = 1),
+                anItem(name = "Smash Bacon", quantity = 2),
+            ),
+        )
+        val state =
+            stateOf(order, events = listOf(KitchenEvent.OrderReceived(order.copy(stage = Stage.CANCELED, version = 3))))
+
+        val items = map(state).cancellationAlerts.single().items
+
+        assertEquals(listOf("Smash Bacon" to 3, "Milkshake Ovomaltine" to 1), items.map { it.name to it.quantity })
+    }
+
+    @Nested
+    inner class `Avisos de envio` {
+
+        @Test
+        fun `falha de envio informa o pedido e a etapa para onde o card voltou`() {
+            val state = stateOf(anOrder(id = 5, stage = Stage.PENDING))
+
+            val notice = BoardUiMapper.mapNotice(StoreNotice.TransitionNotSent(OrderId(5)), state)
+
+            assertEquals(BoardNotice(BoardNotice.Kind.NOT_SENT, "#0005", StageTone.QUEUED), notice)
+        }
+
+        @Test
+        fun `rejeicao informa a etapa real do pedido no servidor`() {
+            val state = stateOf(anOrder(id = 5, stage = Stage.READY, version = 3))
+
+            val notice = BoardUiMapper.mapNotice(StoreNotice.TransitionRejected(OrderId(5)), state)
+
+            assertEquals(BoardNotice(BoardNotice.Kind.REJECTED, "#0005", StageTone.READY), notice)
+        }
+
+        @Test
+        fun `pedido que ja saiu da tela nao gera aviso`() {
+            assertNull(BoardUiMapper.mapNotice(StoreNotice.TransitionNotSent(OrderId(99)), KitchenState()))
+        }
+    }
+
     @Nested
     inner class `Desfazer e alertas` {
 
@@ -191,6 +239,7 @@ class BoardUiMapperTest {
 
             assertEquals(OrderId(1), alert.id)
             assertEquals(StageTone.PREPARING, alert.previousTone)
+            assertEquals(listOf("Smash Clássico"), alert.items.map { it.name })
             assertTrue(map(state).columns.all { it.orders.isEmpty() })
         }
     }

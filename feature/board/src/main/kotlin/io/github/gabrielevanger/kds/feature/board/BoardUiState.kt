@@ -79,8 +79,22 @@ data class CancellationAlertUi(
     val origin: OriginLabel,
     val tableNumber: Int?,
     val previousTone: StageTone,
+    /** O card saiu do board: o alerta precisa dizer o que parar de fazer. */
+    val items: ImmutableList<OrderItemUi>,
 )
 
 /** Toque mais recente que ainda pode ser desfeito. */
 @Immutable
 data class UndoUi(val orderId: OrderId, val reference: String, val targetTone: StageTone)
+
+/** Aviso pontual sobre um toque que não chegou ao servidor, com a etapa em que o card ficou. */
+@Immutable
+data class BoardNotice(val kind: Kind, val reference: String, val currentTone: StageTone) {
+    enum class Kind {
+        /** Falha de rede: o card voltou para a etapa anterior. */
+        NOT_SENT,
+
+        /** Outro aparelho mudou o pedido antes; o card mostra a etapa real. */
+        REJECTED,
+    }
+}

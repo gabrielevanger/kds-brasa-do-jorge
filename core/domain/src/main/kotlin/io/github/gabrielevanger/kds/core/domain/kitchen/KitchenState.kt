@@ -15,6 +15,8 @@ data class KitchenState(
     val orders: PersistentMap<OrderId, Order> = persistentMapOf(),
     val pending: PersistentMap<OrderId, PendingTransition> = persistentMapOf(),
     val cancellationAlerts: PersistentMap<OrderId, CancellationAlert> = persistentMapOf(),
+    /** Distingue a cozinha ainda sem dados da cozinha realmente vazia: vira true no primeiro snapshot. */
+    val hasSnapshot: Boolean = false,
 ) {
     /** Fila como a tela deve mostrar, na ordem de chegada; empate no horário é decidido pelo id. */
     fun ordersByArrival(): List<KitchenOrder> = orders.values

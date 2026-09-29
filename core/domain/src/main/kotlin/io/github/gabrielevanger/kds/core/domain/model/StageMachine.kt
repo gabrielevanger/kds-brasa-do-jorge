@@ -31,3 +31,6 @@ object StageMachine {
 val Stage.isTerminal: Boolean get() = StageMachine.allowedTransitions(this).isEmpty()
 
 val Stage.isActive: Boolean get() = !isTerminal
+
+/** A cozinha já começou o pedido: cancelá-lo agora significa insumo e tempo de chapa perdidos. */
+val Stage.isInProgress: Boolean get() = this == Stage.PREPARING || this == Stage.READY

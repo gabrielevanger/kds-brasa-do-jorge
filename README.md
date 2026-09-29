@@ -43,7 +43,7 @@ Android nativo em Kotlin com Jetpack Compose. Um único APK assume o papel do ap
 - **Cancelamento de pedido em andamento** vira alerta com alarme até alguém tocar em CIENTE, inclusive o que acontecer durante uma queda de rede.
 - **Filtro por estação** (Chapa, Fritadeira, Montagem).
 - **Expedição no celular:** bip e vibração quando um pedido fica pronto, COBRAR para pedido não pago e tempo no balcão.
-- **Tema claro e escuro**, seguindo o modo do Android; a TV fica sempre escura.
+- **Tema claro e escuro**, seguindo o modo do Android, que por padrão é claro, em todos os aparelhos.
 
 ## Como rodar
 

@@ -39,20 +39,22 @@ data class KdsColors(
     val onCanceled: Color,
     /** Destaque dos modificadores ("sem cebola", "mal passado") sobre o fundo do card. */
     val modifierHighlight: Color,
+    /** Chama da marca ao lado do nome da casa. Elemento gráfico: contraste mínimo de 3:1 com o fundo. */
+    val brand: Color,
 )
 
 /**
- * Escuro, o padrão da cozinha: as cores de estado se destacam mais sobre fundo escuro, e a tela
+ * Escuro, em grafite quente: as cores de estado se destacam mais sobre fundo escuro, e a tela
  * brilha menos num turno longo perto da chapa.
  */
 val KitchenDarkColors = KdsColors(
-    background = Color(0xFF0E0F11),
-    surface = Color(0xFF1B1D21),
-    surfaceRaised = Color(0xFF26292E),
-    onSurface = Color(0xFFF5F5F5),
-    onSurfaceMuted = Color(0xFFB8BCC4),
-    outline = Color(0xFF3A3E45),
-    cardOutline = Color(0xFF2A2D33),
+    background = Color(0xFF121110),
+    surface = Color(0xFF1D1C1A),
+    surfaceRaised = Color(0xFF2C2A27),
+    onSurface = Color(0xFFF2EDE8),
+    onSurfaceMuted = Color(0xFFB9B1A8),
+    outline = Color(0xFF3A3632),
+    cardOutline = Color(0xFF2C2A27),
     queued = Color(0xFF5B8DEF),
     onQueued = Color(0xFF0E0F11),
     preparing = Color(0xFFFFA726),
@@ -72,20 +74,22 @@ val KitchenDarkColors = KdsColors(
     canceled = Color(0xFFB71C1C),
     onCanceled = Color(0xFFFFFFFF),
     modifierHighlight = Color(0xFFFFD54F),
+    brand = Color(0xFFFF7A1A),
 )
 
 /**
- * Claro, para ambientes muito iluminados ou por preferência do dono. Os tons de etapa ficam mais
- * escuros para o texto branco manter o contraste, e o modificador sai do amarelo, que some no branco.
+ * Claro, em branco quente, o padrão do Android e o mais agradável à primeira vista. Os tons de etapa
+ * ficam mais escuros para o texto branco manter o contraste, e o modificador e a chama da marca saem
+ * dos tons claros, que somem no branco.
  */
 val KitchenLightColors = KdsColors(
-    background = Color(0xFFF3F4F6),
+    background = Color(0xFFF7F3EE),
     surface = Color(0xFFFFFFFF),
-    surfaceRaised = Color(0xFFE8EAEE),
-    onSurface = Color(0xFF111317),
-    onSurfaceMuted = Color(0xFF4B5059),
-    outline = Color(0xFFC9CDD4),
-    cardOutline = Color(0xFFC9CDD4),
+    surfaceRaised = Color(0xFFEFE9E2),
+    onSurface = Color(0xFF1C1917),
+    onSurfaceMuted = Color(0xFF57504A),
+    outline = Color(0xFFD9D0C5),
+    cardOutline = Color(0xFFE2D9CE),
     queued = Color(0xFF1D5FD1),
     onQueued = Color(0xFFFFFFFF),
     preparing = Color(0xFFF59E0B),
@@ -105,4 +109,5 @@ val KitchenLightColors = KdsColors(
     canceled = Color(0xFFB71C1C),
     onCanceled = Color(0xFFFFFFFF),
     modifierHighlight = Color(0xFF92400E),
+    brand = Color(0xFFC2410C),
 )

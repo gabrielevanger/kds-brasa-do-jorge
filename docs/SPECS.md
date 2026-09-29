@@ -58,7 +58,7 @@ Peso definido por quanto a dor custa (cliente perdido, retrabalho, prejuízo) e 
 - A Expedição só mostra cancelamentos de pedidos que já estavam prontos ("NÃO ENTREGAR"); cancelamento em preparo é assunto da cozinha.
 - Um tablet na montagem com a visão geral; "pronto" é marcado no pedido inteiro.
 - Linhas do pedido com o mesmo nome, os mesmos modificadores e a mesma observação são o mesmo item e aparecem somadas; qualquer diferença mantém a linha separada.
-- O app segue o modo claro ou escuro do Android; a TV fica sempre escura, porque o Android TV não oferece o ajuste ao dono.
+- Todos os aparelhos, inclusive a TV, seguem o modo claro ou escuro do Android, que por padrão é claro.
 - Um pedido ativo que deixa de vir no snapshot após uma reconexão saiu do servidor por motivo desconhecido e é removido da tela sem alerta. O mock sempre envia todos os pedidos; a regra protege contra um back que omita os finalizados.
 - Os números do cenário não fecham (60% de 3.200 pedidos dá ~63 por hora no pico; o texto diz até 14 em 20 min, ~42 por hora). A lista foi pensada para o maior, com margem.
 

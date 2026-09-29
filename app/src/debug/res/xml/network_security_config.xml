@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Somente debug: o mock roda em HTTP na rede local, e o endereço muda conforme o aparelho
+    (10.0.2.2 no emulador, IP do computador no tablet). O release mantém HTTPS obrigatório.
+-->
+<network-security-config xmlns:tools="http://schemas.android.com/tools">
+    <base-config
+        cleartextTrafficPermitted="true"
+        tools:ignore="InsecureBaseConfiguration" />
+</network-security-config>

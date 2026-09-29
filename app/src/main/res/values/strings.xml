@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">KDS Brasa do Jorge</string>
+    <string name="status_connecting">Conectando</string>
+    <string name="status_connected">Conectado</string>
+    <string name="status_reconnecting">Reconectando (tentativa %1$d)</string>
+    <plurals name="status_summary">
+        <item quantity="one">%1$s · %2$d pedido ativo</item>
+        <item quantity="other">%1$s · %2$d pedidos ativos</item>
+    </plurals>
 </resources>

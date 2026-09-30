@@ -1,6 +1,11 @@
 # KDS Brasa do Jorge
 
 [![CI](https://github.com/gabrielevanger/kds-brasa-do-jorge/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/gabrielevanger/kds-brasa-do-jorge/actions/workflows/ci.yml)
+![Kotlin 2.4](https://img.shields.io/badge/Kotlin-2.4-7F52FF?logo=kotlin&logoColor=white)
+![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-BOM%202026.09-4285F4?logo=jetpackcompose&logoColor=white)
+![DI: Hilt](https://img.shields.io/badge/DI-Hilt-2E7D32)
+![Testes: JUnit 6, Robolectric e Turbine](https://img.shields.io/badge/testes-JUnit%206%20%2B%20Robolectric%20%2B%20Turbine-E65100)
+![Android 8.0 ou mais novo](https://img.shields.io/badge/Android-8.0%2B-3DDC84?logo=android&logoColor=white)
 
 Kitchen Display System para a hamburgueria Brasa do Jorge, feito para o [desafio técnico da Pigz](https://github.com/orangebr/desafio-frontend-hamburgueria). Os pedidos chegam em tempo real do mock do desafio e substituem a impressora de comandas: a cozinha vê a fila no tablet, o garçom recebe os pedidos prontos no celular e uma TV na parede mostra a fila para todos.
 

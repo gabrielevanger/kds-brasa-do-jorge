@@ -62,10 +62,26 @@ Android nativo em Kotlin com Jetpack Compose. Um único APK assume o papel do ap
 
 ### O fluxo
 
-```
-pedido chega -> Na fila -(Iniciar)-> Preparando -(Pronto)-> Pronto -(Entregue)-> sai da tela
-                                                               |
-                                                               +-> o celular do garçom bipa e vibra
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#8A8178", "edgeLabelBackground": "#F7F3EE", "fontFamily": "sans-serif"}}}%%
+flowchart LR
+    chega(Pedido chega) --> fila(Na fila)
+    fila -- Iniciar --> preparo(Preparando)
+    preparo -- Pronto --> pronto(Pronto)
+    pronto -- Entregue --> fim(Sai da tela)
+    pronto -. avisa .-> garcom(Celular do garçom<br/>bipa e vibra)
+    preparo -. cliente desiste .-> alerta(Alerta de cancelamento<br/>até tocar em Ciente)
+    pronto -. cliente desiste .-> alerta
+    classDef neutro fill:#F7F3EE,stroke:#8A8178,color:#1C1917
+    classDef fila fill:#E3ECFD,stroke:#1D5FD1,color:#1747A6
+    classDef preparo fill:#FDF0D5,stroke:#F59E0B,color:#7A4A00
+    classDef pronto fill:#DCF3E3,stroke:#15803D,color:#0F5E2C
+    classDef alerta fill:#FDE2E2,stroke:#C62828,color:#8E1B1B
+    class chega,fim,garcom neutro
+    class fila fila
+    class preparo preparo
+    class pronto pronto
+    class alerta alerta
 ```
 
 A cozinha avança o pedido com um toque em cada etapa, no tablet da bancada de montagem. O garçom recebe os pedidos prontos no celular e marca a entrega ali (a cozinha também pode marcar no tablet). Um cancelamento de pedido já iniciado vira alerta nas telas de quem tem algo a interromper.

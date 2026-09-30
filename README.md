@@ -1,5 +1,7 @@
 # KDS Brasa do Jorge
 
+[![CI](https://github.com/gabrielevanger/kds-brasa-do-jorge/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/gabrielevanger/kds-brasa-do-jorge/actions/workflows/ci.yml)
+
 Kitchen Display System para a hamburgueria Brasa do Jorge, feito para o [desafio técnico da Pigz](https://github.com/orangebr/desafio-frontend-hamburgueria). Os pedidos chegam em tempo real do mock do desafio e substituem a impressora de comandas: a cozinha vê a fila no tablet, o garçom recebe os pedidos prontos no celular e uma TV na parede mostra a fila para todos.
 
 Android nativo em Kotlin com Jetpack Compose. Um único APK assume o papel do aparelho:
@@ -96,6 +98,14 @@ A caixa alta é reservada aos alertas (ATRASADO, CANCELADO, COBRAR), para que el
 A mesma fila do board, vista de longe por todos, **sem botões, filtro nem desfazer**: na TV ninguém toca. Pelo mesmo motivo, **sem alerta de cancelamento**: ninguém tocaria em Ciente, e o alerta ficaria na tela para sempre. Quem trata o cancelamento é o tablet.
 
 ## Como rodar
+
+**Atalho sem compilar:** o APK pronto está na [release mais recente](https://github.com/gabrielevanger/kds-brasa-do-jorge/releases/latest). Com o mock rodando (passo 1) e um emulador aberto, instale o arquivo baixado:
+
+```bash
+adb install kds-brasa-do-jorge-v1.0.0.apk
+```
+
+O app procura o mock em `10.0.2.2`, que é o computador visto de dentro do emulador. Para um aparelho físico, compile com o endereço do computador (passo 2).
 
 ### Pré-requisitos
 
@@ -212,7 +222,7 @@ adb connect 192.168.0.20
 ./gradlew :app:installDebug
 ```
 
-Sem computador, dá para instalar pela própria TV com o app "Downloader", a partir de um link direto para o APK.
+Sem computador, dá para instalar pela própria TV com o app "Downloader", a partir de um link direto para o APK. Numa TV de verdade, o APK precisa ter sido compilado com o endereço do computador (`-Pkds.serverUrl`, passo 2); o da release aponta para o emulador.
 
 ## Decisões e trade-offs
 

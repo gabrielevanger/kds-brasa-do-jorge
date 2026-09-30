@@ -94,7 +94,7 @@ A cozinha não pode parar para confirmar diálogos, mas um toque errado no pico 
 | Enviar na hora e desfazer com um `PATCH` de volta | O servidor teria de aceitar transições para trás; os outros aparelhos veriam o pedido ir e voltar |
 | **Enviar depois de 5 s, desfazer cancela o envio** | Se o app morrer nesses 5 s, o toque se perde e o card fica na etapa anterior |
 
-Foi escolhido o envio adiado, no modelo do "desfazer envio" do Gmail: o servidor nunca vê uma ação desfeita. O custo foi aceito porque o card fica visível na etapa anterior e basta tocar de novo. O desfazer também cobre o ENTREGUE, que tira o card da tela.
+Foi escolhido o envio adiado, no modelo do "desfazer envio" do Gmail: o servidor nunca vê uma ação desfeita. O custo foi aceito porque o card fica visível na etapa anterior e basta tocar de novo. O desfazer também cobre o Entregue, que tira o card da tela.
 
 Os botões continuam ativos sem conexão: a janela de 5 s absorve oscilações curtas e, se o envio falhar, o card volta e a barra avisa.
 
@@ -157,7 +157,7 @@ O mesmo APK assume o papel do aparelho:
 - **Menor largura do aparelho, e não da janela:** girar o celular não troca a tela do garçom pelo board.
 - **Tela sempre ligada e barras escondidas só no tablet e na TV.** O celular do garçom fica no bolso e é usado para outras coisas.
 - **Abaixo de 600 dp, a ação vai para baixo do texto** no alerta de cancelamento e na barra de desfazer; um botão de 240 dp ao lado do texto o espremia até sumir.
-- **A TV não mostra alerta de cancelamento nem toca som.** Ninguém tocaria em CIENTE, e o alerta ficaria na tela para sempre; quem trata o cancelamento é o tablet.
+- **A TV não mostra alerta de cancelamento nem toca som.** Ninguém tocaria em Ciente, e o alerta ficaria na tela para sempre; quem trata o cancelamento é o tablet.
 
 ## Avisos sonoros e vibração
 
@@ -202,11 +202,11 @@ O store e o escopo de coroutines são `@Singleton`, interfaces são ligadas com 
 - **Fakes em vez de mocks no domínio:** fábricas de pedidos em `testFixtures`, compartilhadas pelos módulos; stream e comandos falsos no teste do store; eventos duplicados e fora de ordem alimentados direto no reducer; tempo virtual para o backoff e a janela de desfazer.
 - **Interface com Robolectric na JVM**, e não teste instrumentado: roda no CI em todo PR, sem emulador lento e instável. Os testes rodam em Java 21 (exigido pelo Robolectric para API 36) enquanto o código compila para 17, usam API 36 porque o Espresso ainda chama uma API removida no Android 17, e simulam o celular ou o tablet conforme a tela. Cada uma dessas configurações foi provada necessária removendo-a e vendo o teste falhar.
 - **Teste de mutação manual em cada regra de negócio:** a regra é quebrada de propósito e algum teste precisa falhar. Isso revelou testes que faltavam e dois bugs reais, contados em [AI_USAGE.md](AI_USAGE.md).
-- **Validação no emulador** de tablet, celular e TV antes de cada PR. Foi assim que apareceram o pedido escondido acima do topo da lista e o ENTREGUE sem desfazer, os dois com todos os testes verdes.
+- **Validação no emulador** de tablet, celular e TV antes de cada PR. Foi assim que apareceram o pedido escondido acima do topo da lista e o Entregue sem desfazer, os dois com todos os testes verdes.
 
 ## Limitações conhecidas e v2
 
-- **Alertas de cancelamento vivem em memória.** Se o app reiniciar com um alerta sem CIENTE, ele se perde: o `snapshot` traz o pedido já cancelado, que é tratado como histórico. Aceitável com o app aberto o turno todo; a v2 persiste os alertas localmente.
+- **Alertas de cancelamento vivem em memória.** Se o app reiniciar com um alerta sem Ciente, ele se perde: o `snapshot` traz o pedido já cancelado, que é tratado como histórico. Aceitável com o app aberto o turno todo; a v2 persiste os alertas localmente.
 - **Toque perdido se o app morrer na janela de 5 s.** Custo aceito do envio adiado; a v2 pode persistir o envio agendado.
 - **O tempo de espera depende do relógio do aparelho.** Os timers comparam o horário do pedido, gravado pelo servidor, com o relógio local; um aparelho com a hora errada mostra tempos errados. Apareceu na validação: o emulador de TV estava quase duas horas atrasado, e todos os timers ficavam em 00:00, porque para ele os pedidos tinham sido criados no futuro. Com a hora automática, como em qualquer aparelho de uso real, não acontece. A v2 calcula a diferença entre o relógio do servidor e o do aparelho e corrige os timers.
 - **Fila offline de ações.** Hoje uma ação sem rede volta com aviso; a v2 pode enfileirar e reenviar.

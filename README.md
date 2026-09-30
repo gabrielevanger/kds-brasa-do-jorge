@@ -14,7 +14,7 @@ Android nativo em Kotlin com Jetpack Compose. Um único APK assume o papel do ap
 | Aparelho | Tela | Para quem |
 |---|---|---|
 | Tablet na bancada | Board com as colunas Na fila, Preparando e Pronto | Cozinha |
-| Celular | Expedição: pedidos prontos e ENTREGUE | Garçom |
+| Celular | Expedição: pedidos prontos e Entregue | Garçom |
 | TV (Android TV ou Google TV) | Painel somente leitura | Todos, de longe |
 
 ## Telas
@@ -50,10 +50,10 @@ Android nativo em Kotlin com Jetpack Compose. Um único APK assume o papel do ap
 
 - **Tempo real por SSE**, com reconexão automática e aviso "Reconectando"; na queda, a tela mantém o último estado.
 - **Fila por ordem de chegada** com tempo de espera e faixas de atraso (atenção a partir de 8 min, atrasado a partir de 15 min) em cor, ícone e texto, e faixa lateral nos cards atrasados.
-- **Um toque para avançar**, sem confirmação, com DESFAZER por 5 segundos, inclusive no ENTREGUE.
-- **Modificadores em destaque** ("sem cebola", "mal passado"), itens iguais somados numa linha e selo GRANDE para pedidos de 5 itens ou mais.
-- **Origem forte:** MESA 4, BALCÃO, iFOOD, WHATSAPP, PIGZ e os demais canais.
-- **Cancelamento de pedido em andamento** vira alerta com alarme até alguém tocar em CIENTE, inclusive o que acontecer durante uma queda de rede.
+- **Um toque para avançar**, sem confirmação, com Desfazer por 5 segundos, inclusive no Entregue.
+- **Modificadores em destaque** ("sem cebola", "mal passado"), itens iguais somados numa linha e selo Grande para pedidos de 5 itens ou mais.
+- **Origem forte:** Mesa 4, Balcão, iFood, WhatsApp, Pigz e os demais canais.
+- **Cancelamento de pedido em andamento** vira alerta com alarme até alguém tocar em Ciente, inclusive o que acontecer durante uma queda de rede.
 - **Filtro por estação** (Chapa, Fritadeira, Montagem).
 - **Expedição no celular:** bip e vibração quando um pedido fica pronto, COBRAR para pedido não pago e tempo no balcão.
 - **Tema claro e escuro**, seguindo o modo do Android, que por padrão é claro, em todos os aparelhos.
@@ -62,10 +62,26 @@ Android nativo em Kotlin com Jetpack Compose. Um único APK assume o papel do ap
 
 ### O fluxo
 
-```
-pedido chega -> Na fila -(Iniciar)-> Preparando -(Pronto)-> Pronto -(Entregue)-> sai da tela
-                                                               |
-                                                               +-> o celular do garçom bipa e vibra
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#8A8178", "edgeLabelBackground": "#F7F3EE", "fontFamily": "sans-serif"}}}%%
+flowchart LR
+    chega(Pedido chega) --> fila(Na fila)
+    fila -- Iniciar --> preparo(Preparando)
+    preparo -- Pronto --> pronto(Pronto)
+    pronto -- Entregue --> fim(Sai da tela)
+    pronto -. avisa .-> garcom(Celular do garçom<br/>bipa e vibra)
+    preparo -. cliente desiste .-> alerta(Alerta de cancelamento<br/>até tocar em Ciente)
+    pronto -. cliente desiste .-> alerta
+    classDef neutro fill:#F7F3EE,stroke:#8A8178,color:#1C1917
+    classDef fila fill:#E3ECFD,stroke:#1D5FD1,color:#1747A6
+    classDef preparo fill:#FDF0D5,stroke:#F59E0B,color:#7A4A00
+    classDef pronto fill:#DCF3E3,stroke:#15803D,color:#0F5E2C
+    classDef alerta fill:#FDE2E2,stroke:#C62828,color:#8E1B1B
+    class chega,fim,garcom neutro
+    class fila fila
+    class preparo preparo
+    class pronto pronto
+    class alerta alerta
 ```
 
 A cozinha avança o pedido com um toque em cada etapa, no tablet da bancada de montagem. O garçom recebe os pedidos prontos no celular e marca a entrega ali (a cozinha também pode marcar no tablet). Um cancelamento de pedido já iniciado vira alerta nas telas de quem tem algo a interromper.
@@ -276,7 +292,7 @@ As premissas estão em [docs/SPECS.md](docs/SPECS.md#premissas), junto com os re
 Usei o Claude Code do começo ao fim, em passos pequenos: a IA explicava o passo, eu revisava, e nenhum commit saiu sem eu ler a mensagem. Todo commit leva o rodapé de coautoria da IA. O registro completo, com data, está em [docs/AI_USAGE.md](docs/AI_USAGE.md).
 
 - **Onde ajudou:** ler o mock e achar as armadilhas antes de escrever o app, apresentar alternativas com custo para cada decisão, escrever código e testes, e investigar no emulador (som, vibração, fluidez).
-- **Onde errou e foi corrigida:** testes que não testavam o que diziam, pegos por teste de mutação; bugs que só apareceram no emulador com todos os testes verdes (um pedido escondido acima do topo da lista, o ENTREGUE sem desfazer); comandos errados que ela me passou; e uma conclusão apressada sobre a fluidez, corrigida quando sugeri medir o build release.
+- **Onde errou e foi corrigida:** testes que não testavam o que diziam, pegos por teste de mutação; bugs que só apareceram no emulador com todos os testes verdes (um pedido escondido acima do topo da lista, o Entregue sem desfazer); comandos errados que ela me passou; e uma conclusão apressada sobre a fluidez, corrigida quando sugeri medir o build release.
 - **O que eu decidi:** Hilt, a estrutura modular, o desfazer por envio adiado, as regras de negócio confirmadas, nada de números nem textos fixos no código, o tema claro e o polimento visual, e a forma de trabalhar.
 
 ## Documentação
